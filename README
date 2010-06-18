@@ -1,1 +1,3 @@
 Make sure the current directory is in your CLASSPATH, along with the fgdo-j directory.
+
+This also requires a JDBC driver: http://dev.mysql.com/downloads/connector/j/
