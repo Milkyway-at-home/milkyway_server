@@ -1,5 +1,11 @@
-Make sure the current directory is in your CLASSPATH, along with the fgdo-j directory.
+Make sure after checking out you run:
 
-This also requires a JDBC driver: http://dev.mysql.com/downloads/connector/j/
+git submodule init
+git submodule update
 
-And fast-MD5: http://www.twmacinta.com/myjava/fast_md5.php
+To compile:
+
+mkdir build
+cd build
+cmake ..
+make
