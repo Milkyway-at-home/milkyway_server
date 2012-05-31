@@ -37,8 +37,11 @@
 #include "tao/evolutionary_algorithms/particle_swarm_db.hxx"
 #include "tao/evolutionary_algorithms/differential_evolution_db.hxx"
 #include "tao/undvc_common/arguments.hxx"
+#include "tao/undvc_common/vector_io.hxx"
 #include "tao/undvc_common/file_io.hxx"
 
+#include "stream_fit_star_data.hxx"
+#include "stream_fit_parameters.hxx"
 
 #define WORKUNIT_XML "milkyway_nbody_wu_new.xml"
 #define RESULT_XML "milkyway_nbody_result.xml"
@@ -94,28 +97,56 @@ int main(int argc, char **argv) {
     cout << "input_filenames[1]: " << input_filenames[1] << endl;
 
     //Need to read files to calculate minimum and maximum bounds
+    ASTRONOMY_PARAMETERS *ap = (ASTRONOMY_PARAMETERS*)malloc(sizeof(ASTRONOMY_PARAMETERS));
+    read_astronomy_parameters( parameters_filename.c_str(), ap );
+
+    double *min_b, *max_b;
+    get_min_parameters(ap, &min_b);
+    get_max_parameters(ap, &max_b);
+
+    int number_parameters = get_optimized_parameter_count(ap);
+
+    vector<double> min_bound(min_b, min_b + number_parameters);
+    vector<double> max_bound(max_b, max_b + number_parameters);
+
+    cout << "min_bound: " << vector_to_string(min_bound) << endl;
+    cout << "max_bound: " << vector_to_string(max_bound) << endl;
+
+    STAR_POINTS *sp = (STAR_POINTS*)malloc(sizeof(STAR_POINTS));
+    read_star_points( stars_filename.c_str(), sp );
 
     //Get any extra xml:
-    //      <credit>13297.805963949866</credit>, <rsc_fpops_est>4.925113319981432E15</rsc_fpops_est>, <rsc_fpops_bound>4.925113319981432E19</rsc_fpops_bound>, <rsc_disk_bound>5.24288E7</rsc_disk_bound>
-    //      a. calculate rsc_fpops_est
-    //      b. calculate rsc_fpops_bound
-    //      c. calculate rsc_disk_bound
+    //      a. calcualte credit
+    //      b. calculate rsc_fpops_est
+    //      c. calculate rsc_fpops_bound
+    //      d. calculate rsc_disk_bound
 
-    double min_b[] = { min_simulation_time, min_orbit_time, min_radius_1, min_radius_2, min_mass_1, min_mass_2 };
-    double max_b[] = { max_simulation_time, max_orbit_time, max_radius_1, max_radius_2, max_mass_1, max_mass_2 };
-    vector<double> min_bound(min_b, min_b + 6);
-    vector<double> max_bound(max_b, max_b + 6);
+    double fpops = 0;
+    double fpops_new = 0;
 
-    double timestep = (0.1 * 0.1) * sqrt(M_PI * (4.0/3.0) * max_radius_2 * max_radius_2 * max_radius_2 / (max_mass_1 + max_mass_2));
-    double step_fpops = (6 + 3 + (7 * 5) + (2 * 10) + 20) * (n_bodies * n_bodies);
-    double fpops = step_fpops * (max_simulation_time / timestep);
+    cout << "looping over number intergrals: " << ap->number_integrals << endl;
+
+    for (int i  =0; i < ap->number_integrals; i++) {
+        fpops += (ap->integral[i]->r_steps / 100.0) * (ap->integral[i]->mu_steps / 100.0) * (ap->integral[i]->nu_steps / 100.0);
+        fpops_new += (ap->integral[i]->mu_steps / 100.0) * (ap->integral[i]->r_steps/ 100.0) * (5.0 + ap->integral[i]->nu_steps * (7.0 + 5.0 * ap->number_streams + ap->convolve * (35.0 + 52.0 * ap->number_streams)));
+    }
+    double integral_flops = fpops * (4.0 + 2.0 * ap->number_streams + ap->convolve * (56 + 58 * ap->number_streams));
+
+    double likelihood_flops = sp->number_stars * (ap->convolve * (100.0 + ap->number_streams * 58.0) + 251.0 + ap->number_streams * 12.0 + 54.0);
+
+    double flops = (integral_flops * 100.0 * 100.0 * 100.0) + likelihood_flops;
+    double flops_new = (fpops_new * 100.0 * 100.0) + likelihood_flops;
 
     double multiplier = 5.4;
-    double credit = multiplier * 5 * fpops / 1000000000000.0;
+    double credit = multiplier * flops / 1000000000000.0;
+    double credit_new = multiplier * flops_new / 1000000000000.0;
 
-    double rsc_fpops_est = fpops * 10; 
-    double rsc_fpops_bound = fpops * 100000;
-    double rsc_disk_bound = 50 * 1024 * 1024; // 50MB
+    cout << "credit old: " << credit << endl;
+    cout << "credit new: " << credit_new << endl;
+
+    double rsc_fpops_est = flops;
+    double rsc_fpops_bound = flops * 1000;
+    double rsc_disk_bound = 15e6;
 
     cout.precision(15);
     cout << "credit: "          << credit           << endl;
@@ -130,6 +161,11 @@ int main(int argc, char **argv) {
     oss << "<rsc_disk_bound>"   << rsc_disk_bound   << "</rsc_disk_bound>"  << endl;
 
     string extra_xml = oss.str();
+
+    free_parameters(ap);
+    free(ap);
+    free_star_points(sp);
+    free(sp);
 
     if (argument_exists(arguments, "--create_tables")) {
         try {

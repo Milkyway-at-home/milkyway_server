@@ -24,7 +24,7 @@
  *****/
 #include <stdio.h>
 #include <stdlib.h>
-#include "star_points.h"
+#include "stream_fit_star_data.hxx"
 
 /****
  *     BOINC includes
