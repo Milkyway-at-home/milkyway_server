@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     }
 
     DB_APP app;
-    const char* app_name = "example_app";
+    const char* app_name = "milkyway_nbody";
     char buf[256];
     sprintf(buf, "where name='%s'", app_name);
     if (app.lookup(buf)) {

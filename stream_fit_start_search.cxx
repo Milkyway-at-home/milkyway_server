@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     }
 
     DB_APP app;
-    const char* app_name = "example_app";
+    const char* app_name = "milkyway";
     char buf[256];
     sprintf(buf, "where name='%s'", app_name);
     if (app.lookup(buf)) {
@@ -49,56 +49,31 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    //1. get search id
-    //      a. create search from name and input parameters
-    double min_simulation_time, max_simulation_time;
-    double min_orbit_time, max_orbit_time;
-    double min_radius_1, max_radius_1;
-    double min_radius_2, max_radius_2;
-    double min_mass_1, max_mass_1;
-    double min_mass_2, max_mass_2;
-    uint64_t n_bodies;
-    get_argument(arguments, "--min_simulation_time", true, min_simulation_time);
-    get_argument(arguments, "--max_simulation_time", true, max_simulation_time);
-    get_argument(arguments, "--min_orbit_time", true, min_orbit_time);
-    get_argument(arguments, "--max_orbit_time", true, max_orbit_time);
-    get_argument(arguments, "--min_radius_1", true, min_radius_1);
-    get_argument(arguments, "--max_radius_1", true, max_radius_1);
-    get_argument(arguments, "--min_radius_2", true, min_radius_2);
-    get_argument(arguments, "--max_radius_2", true, max_radius_2);
-    get_argument(arguments, "--min_mass_1", true, min_mass_1);
-    get_argument(arguments, "--max_mass_1", true, max_mass_1);
-    get_argument(arguments, "--min_mass_2", true, min_mass_2);
-    get_argument(arguments, "--max_mass_2", true, max_mass_2);
-    get_argument(arguments, "--n_bodies", true, n_bodies);
+    //Get the application ID
+    int app_id = 3;         /*  The stream fit application's id is 3. */
 
-    //2. get app id
-    int app_id = 7;         /*  The NBody simulation application's id is 7. */
+    //Get any command line options (none for stream fit)
+    string command_line_options = "";
 
-    //5. get input filenames (from command line)
-    //      a. copy to download directory if needed
-    string parameters_filename, histogram_filename;
+    //Get input filenames (from command line), copy to download directory if needed
+    string parameters_filename, stars_filename;
 
     get_argument(arguments, "--parameters", true, parameters_filename);
-    get_argument(arguments, "--histogram", true, histogram_filename);
+    get_argument(arguments, "--stars", true, stars_filename);
 
-    // Copy the input files to the right place in the download directory hierarchy
     copy_file_to_download_dir(parameters_filename);
-    copy_file_to_download_dir(histogram_filename);
+    copy_file_to_download_dir(stars_filename);
 
     vector<string> input_filenames;
     input_filenames.push_back( parameters_filename.substr( parameters_filename.find_last_of('/') + 1) );
-    input_filenames.push_back( histogram_filename.substr( histogram_filename.find_last_of('/') + 1) );
+    input_filenames.push_back( stars_filename.substr( stars_filename.find_last_of('/') + 1) );
 
     cout << "input_filenames[0]: " << input_filenames[0] << endl;
     cout << "input_filenames[1]: " << input_filenames[1] << endl;
 
-    //6. get any command line options
-    //      -f nbody_parameters.lua -h histogram.txt
-    string command_line_options = "-f nbody_parameters.lua -h histogram.txt";
+    //Need to read files to calculate minimum and maximum bounds
 
-
-    //7. get any extra xml:
+    //Get any extra xml:
     //      <credit>13297.805963949866</credit>, <rsc_fpops_est>4.925113319981432E15</rsc_fpops_est>, <rsc_fpops_bound>4.925113319981432E19</rsc_fpops_bound>, <rsc_disk_bound>5.24288E7</rsc_disk_bound>
     //      a. calculate rsc_fpops_est
     //      b. calculate rsc_fpops_bound
@@ -121,16 +96,16 @@ int main(int argc, char **argv) {
     double rsc_disk_bound = 50 * 1024 * 1024; // 50MB
 
     cout.precision(15);
-    cout << "credit: " << credit << endl;
-    cout << "rsc_fpops_est: " << rsc_fpops_est << endl;
-    cout << "rsc_fpops_bound: " << rsc_fpops_bound << endl;
-    cout << "rsc_disk_bound: " << rsc_disk_bound << endl;
+    cout << "credit: "          << credit           << endl;
+    cout << "rsc_fpops_est: "   << rsc_fpops_est    << endl;
+    cout << "rsc_fpops_bound: " << rsc_fpops_bound  << endl;
+    cout << "rsc_disk_bound: "  << rsc_disk_bound   << endl;
 
     ostringstream oss;
-    oss << "<credit>"           << credit           << "</credit>" << endl;
-    oss << "<rsc_fpops_est>"    << rsc_fpops_est    << "</rsc_fpops_est>" << endl;
+    oss << "<credit>"           << credit           << "</credit>"          << endl;
+    oss << "<rsc_fpops_est>"    << rsc_fpops_est    << "</rsc_fpops_est>"   << endl;
     oss << "<rsc_fpops_bound>"  << rsc_fpops_bound  << "</rsc_fpops_bound>" << endl;
-    oss << "<rsc_disk_bound>"   << rsc_disk_bound   << "</rsc_disk_bound>" << endl;
+    oss << "<rsc_disk_bound>"   << rsc_disk_bound   << "</rsc_disk_bound>"  << endl;
 
     string extra_xml = oss.str();
 
@@ -143,7 +118,8 @@ int main(int argc, char **argv) {
         }
     }
 
-    //Put the search in the database
+    //Create search from name and input parameters and use it to get the search id
+
     EvolutionaryAlgorithmDB *ea = NULL;
     string search_name;
     try {
