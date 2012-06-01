@@ -22,6 +22,8 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 #include <boost/filesystem.hpp>
 
@@ -40,14 +42,91 @@
 #include "tao/undvc_common/vector_io.hxx"
 #include "tao/undvc_common/file_io.hxx"
 
-#include "stream_fit_star_data.hxx"
 #include "stream_fit_parameters.hxx"
 
-#define WORKUNIT_XML "milkyway_nbody_wu_new.xml"
-#define RESULT_XML "milkyway_nbody_result.xml"
+#define WORKUNIT_XML "milkyway_wu.xml"
+#define RESULT_XML "a_result.xml"
 
-using std::vector;
-using std::string;
+
+using namespace std;
+
+int get_number_stars(const char* filename) {
+    ifstream stars_file(filename);
+    if (!stars_file.is_open()) {
+        fprintf(stderr, "Couldn't open input file %s.\n", filename);
+        return 1;
+    }   
+
+    string line;
+    getline(stars_file, line);
+
+    int number_stars = 0;
+
+    while (!stars_file.eof()) {
+        number_stars++;
+        getline(stars_file, line);
+    }   
+
+    stars_file.close();
+
+    return number_stars;
+}
+
+void create_json_file(string filename, ASTRONOMY_PARAMETERS *ap) {
+    if ( !boost::filesystem::exists( filename ) ) {
+        log_messages.printf(MSG_CRITICAL, "input filename '%s' does not exist, cannot copy to download directory.\n", filename.c_str());
+        exit(1);
+    }
+
+    char path[256];
+    string short_name = filename.substr(filename.find_last_of('/') + 1);
+
+    int retval = config.download_path( short_name.c_str(), path );
+    if (retval) {
+        log_messages.printf(MSG_CRITICAL, "can't get download path for file '%s', error: %s\n", short_name.c_str(), boincerror(retval));
+        exit(1);
+    }
+
+    if ( boost::filesystem::exists(path) ) {
+        log_messages.printf(MSG_CRITICAL, "input filename '%s' already exists, not copying to download directory.\n", path);
+        return;
+    }
+
+    ofstream json_file(path);
+
+    if (!json_file.is_open()) {
+        log_messages.printf(MSG_CRITICAL, "ERROR: could not open output path for json parameters file: '%s'\n", path);
+        exit(1);
+    }
+
+    json_file << "argv = {...}\n";
+    json_file << "assert(argv, \"arguments not set\")\n";
+    json_file << "wedge = " << ap->wedge << "\n";
+    json_file << "defaultArgMapping(argv)\n";
+    json_file << "area = {\n";
+    for (int32_t i = 0; i < ap->number_integrals; i++) {
+        json_file << "    {\n";
+        json_file << "        r_min = " <<       ap->integral[i]->r_min << ",\n";
+        json_file << "        r_max = " <<       ap->integral[i]->r_max << ",\n";
+        json_file << "        r_steps = " <<     ap->integral[i]->r_steps << ",\n\n";
+
+        json_file << "        mu_min = " <<      ap->integral[i]->mu_min << ",\n";
+        json_file << "        mu_max = " <<      ap->integral[i]->mu_max << ",\n";
+        json_file << "        mu_steps = " <<    ap->integral[i]->mu_steps << ",\n\n";
+
+        json_file << "        nu_min = " <<      ap->integral[i]->nu_min << ",\n";
+        json_file << "        nu_max = " <<      ap->integral[i]->nu_max << ",\n";
+        json_file << "        nu_steps = " <<    ap->integral[i]->nu_steps << "\n";
+
+        json_file << "    }";
+
+        if (i != ap->number_integrals - 1) json_file << ",\n";
+        else json_file << "\n";
+    }   
+    json_file << "}";
+    json_file.close();
+}
+
 
 int main(int argc, char **argv) {
     vector<string> arguments(argv, argv + argc);
@@ -74,6 +153,20 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
+    if (argument_exists(arguments, "--create_tables")) {
+        try {
+            WorkunitInformation::create_table(boinc_db.mysql);
+            ParticleSwarmDB::create_tables(boinc_db.mysql);
+            DifferentialEvolutionDB::create_tables(boinc_db.mysql);
+        } catch (string err_msg) {
+            cerr << "Error creating the workunit information tables in the database." << endl;
+            cerr << "threw message: '" << err_msg << "'" << endl;
+        }
+        
+        exit(0);
+    }
+
+
     //Get the application ID
     int app_id = 3;         /*  The stream fit application's id is 3. */
 
@@ -86,7 +179,6 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--parameters", true, parameters_filename);
     get_argument(arguments, "--stars", true, stars_filename);
 
-    copy_file_to_download_dir(parameters_filename);
     copy_file_to_download_dir(stars_filename);
 
     vector<string> input_filenames;
@@ -100,6 +192,9 @@ int main(int argc, char **argv) {
     ASTRONOMY_PARAMETERS *ap = (ASTRONOMY_PARAMETERS*)malloc(sizeof(ASTRONOMY_PARAMETERS));
     read_astronomy_parameters( parameters_filename.c_str(), ap );
 
+    //Create the JSON parameter file
+    create_json_file(parameters_filename, ap);
+
     double *min_b, *max_b;
     get_min_parameters(ap, &min_b);
     get_max_parameters(ap, &max_b);
@@ -112,8 +207,11 @@ int main(int argc, char **argv) {
     cout << "min_bound: " << vector_to_string(min_bound) << endl;
     cout << "max_bound: " << vector_to_string(max_bound) << endl;
 
-    STAR_POINTS *sp = (STAR_POINTS*)malloc(sizeof(STAR_POINTS));
-    read_star_points( stars_filename.c_str(), sp );
+    cout << "reading star points" << endl;
+
+    int number_stars = get_number_stars(stars_filename.c_str());
+
+    cout << "read star points, n_stars: " << number_stars << endl;
 
     //Get any extra xml:
     //      a. calcualte credit
@@ -126,16 +224,23 @@ int main(int argc, char **argv) {
 
     cout << "looping over number intergrals: " << ap->number_integrals << endl;
 
-    for (int i  =0; i < ap->number_integrals; i++) {
+    for (int i = 0; i < ap->number_integrals; i++) {
         fpops += (ap->integral[i]->r_steps / 100.0) * (ap->integral[i]->mu_steps / 100.0) * (ap->integral[i]->nu_steps / 100.0);
         fpops_new += (ap->integral[i]->mu_steps / 100.0) * (ap->integral[i]->r_steps/ 100.0) * (5.0 + ap->integral[i]->nu_steps * (7.0 + 5.0 * ap->number_streams + ap->convolve * (35.0 + 52.0 * ap->number_streams)));
+
+        cout << "fpops: " << fpops << endl;
+        cout << "fpops_new: " << fpops_new << endl;
     }
     double integral_flops = fpops * (4.0 + 2.0 * ap->number_streams + ap->convolve * (56 + 58 * ap->number_streams));
+    cout << "integral_flops: " << integral_flops << endl;
 
-    double likelihood_flops = sp->number_stars * (ap->convolve * (100.0 + ap->number_streams * 58.0) + 251.0 + ap->number_streams * 12.0 + 54.0);
+    double likelihood_flops = number_stars * (ap->convolve * (100.0 + ap->number_streams * 58.0) + 251.0 + ap->number_streams * 12.0 + 54.0);
+    cout << "likelihood_flops: " << likelihood_flops << " = " << number_stars << " * (" << ap->convolve << " * (100.0 + " << ap->number_streams << " * 58.0) + 251.0 + " << ap->number_streams << " * 12.0 + 54.0)" << endl;
 
     double flops = (integral_flops * 100.0 * 100.0 * 100.0) + likelihood_flops;
     double flops_new = (fpops_new * 100.0 * 100.0) + likelihood_flops;
+    cout << "fpops: " << fpops << endl;
+    cout << "fpops_new: " << fpops_new << endl;
 
     double multiplier = 5.4;
     double credit = multiplier * flops / 1000000000000.0;
@@ -164,17 +269,6 @@ int main(int argc, char **argv) {
 
     free_parameters(ap);
     free(ap);
-    free_star_points(sp);
-    free(sp);
-
-    if (argument_exists(arguments, "--create_tables")) {
-        try {
-            WorkunitInformation::create_table(boinc_db.mysql);
-        } catch (string err_msg) {
-            cerr << "Error creating the workunit information tables in the database." << endl;
-            cerr << "threw message: '" << err_msg << "'" << endl;
-        }
-    }
 
     //Create search from name and input parameters and use it to get the search id
 
@@ -184,9 +278,9 @@ int main(int argc, char **argv) {
         get_argument(arguments, "--search_name", true, search_name);
 
         if (search_name.substr(0,3).compare("ps_") == 0) {
-            ea = new ParticleSwarmDB(boinc_db.mysql, min_bound, max_bound, arguments);
+            ea = new ParticleSwarmDB(boinc_db.mysql, app.id, min_bound, max_bound, arguments);
         } else if (search_name.substr(0,3).compare("de_") == 0) {
-            ea = new DifferentialEvolutionDB(boinc_db.mysql, min_bound, max_bound, arguments);
+            ea = new DifferentialEvolutionDB(boinc_db.mysql, app.id, min_bound, max_bound, arguments);
         } else {
             cerr << "Improperly specified search name: '" << search_name <<"'" << endl;
             cerr << "Search name must begin with either:" << endl;
@@ -201,7 +295,7 @@ int main(int argc, char **argv) {
 
     try{
         WorkunitInformation(boinc_db.mysql,
-                            ea->get_id(),
+                            ea->get_name(),
                             app_id,
                             WORKUNIT_XML,
                             RESULT_XML,

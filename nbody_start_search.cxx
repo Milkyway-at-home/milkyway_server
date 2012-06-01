@@ -70,6 +70,20 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
+    if (argument_exists(arguments, "--create_tables")) {
+        try {
+            WorkunitInformation::create_table(boinc_db.mysql);
+            ParticleSwarmDB::create_tables(boinc_db.mysql);
+            DifferentialEvolutionDB::create_tables(boinc_db.mysql);
+        } catch (string err_msg) {
+            cerr << "Error creating the workunit information tables in the database." << endl;
+            cerr << "threw message: '" << err_msg << "'" << endl;
+        }
+        
+        exit(0);
+    }
+
+
     //1. get search id
     //      a. create search from name and input parameters
     double min_simulation_time, max_simulation_time;
@@ -155,15 +169,6 @@ int main(int argc, char **argv) {
 
     string extra_xml = oss.str();
 
-    if (argument_exists(arguments, "--create_tables")) {
-        try {
-            WorkunitInformation::create_table(boinc_db.mysql);
-        } catch (string err_msg) {
-            cerr << "Error creating the workunit information tables in the database." << endl;
-            cerr << "threw message: '" << err_msg << "'" << endl;
-        }
-    }
-
     //Put the search in the database
     EvolutionaryAlgorithmDB *ea = NULL;
     string search_name;
@@ -171,9 +176,9 @@ int main(int argc, char **argv) {
         get_argument(arguments, "--search_name", true, search_name);
 
         if (search_name.substr(0,3).compare("ps_") == 0) {
-            ea = new ParticleSwarmDB(boinc_db.mysql, min_bound, max_bound, arguments);
+            ea = new ParticleSwarmDB(boinc_db.mysql, app.id, min_bound, max_bound, arguments);
         } else if (search_name.substr(0,3).compare("de_") == 0) {
-            ea = new DifferentialEvolutionDB(boinc_db.mysql, min_bound, max_bound, arguments);
+            ea = new DifferentialEvolutionDB(boinc_db.mysql, app.id, min_bound, max_bound, arguments);
         } else {
             cerr << "Improperly specified search name: '" << search_name <<"'" << endl;
             cerr << "Search name must begin with either:" << endl;
@@ -188,7 +193,7 @@ int main(int argc, char **argv) {
 
     try{
         WorkunitInformation(boinc_db.mysql,
-                            ea->get_id(),
+                            ea->get_name(),
                             app_id,
                             WORKUNIT_XML,
                             RESULT_XML,
