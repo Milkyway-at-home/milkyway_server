@@ -180,6 +180,7 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--stars", true, stars_filename);
 
     copy_file_to_download_dir(stars_filename);
+    copy_file_to_download_dir(parameters_filename);
 
     vector<string> input_filenames;
     input_filenames.push_back( parameters_filename.substr( parameters_filename.find_last_of('/') + 1) );
@@ -192,8 +193,10 @@ int main(int argc, char **argv) {
     ASTRONOMY_PARAMETERS *ap = (ASTRONOMY_PARAMETERS*)malloc(sizeof(ASTRONOMY_PARAMETERS));
     read_astronomy_parameters( parameters_filename.c_str(), ap );
 
+    /*  TODO: clients don't accept JSON parameter files correctly
     //Create the JSON parameter file
     create_json_file(parameters_filename, ap);
+    */
 
     double *min_b, *max_b;
     get_min_parameters(ap, &min_b);
