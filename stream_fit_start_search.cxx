@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
 
 
     //Get the application ID
-    int app_id = 3;         /*  The stream fit application's id is 3. */
+    int app_id = app.id;         /*  The stream fit application's id is 3. */
 
     //Get any command line options (none for stream fit)
     string command_line_options = "";

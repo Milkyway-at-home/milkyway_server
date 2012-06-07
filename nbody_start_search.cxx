@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--n_bodies", true, n_bodies);
 
     //2. get app id
-    int app_id = 7;         /*  The NBody simulation application's id is 7. */
+    int app_id = app.id;         /*  The NBody simulation application's id is 7. */
 
     //5. get input filenames (from command line)
     //      a. copy to download directory if needed
