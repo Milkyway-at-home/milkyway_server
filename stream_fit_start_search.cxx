@@ -209,13 +209,15 @@ int main(int argc, char **argv) {
         exit(1);
     }   
 
-//    if ( boost::filesystem::exists(path) ) { 
+    fwrite_astronomy_parameters(stdout, ap);
+    cout << endl << endl;
+
+    if ( boost::filesystem::exists(path) ) { 
         log_messages.printf(MSG_CRITICAL, "input file '%s' already exists in downlaod directory hierarchy as '%s', not copying.\n", short_name.c_str(), path);
-//    } else {
-        fwrite_astronomy_parameters(stdout, ap);
+    } else {
         exit(0);
         write_astronomy_parameters(path, ap);
-//    }
+    }
 
 
     /*  TODO: clients don't accept JSON parameter files correctly
