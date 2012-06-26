@@ -180,7 +180,6 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--stars", true, stars_filename);
 
     copy_file_to_download_dir(stars_filename);
-    copy_file_to_download_dir(parameters_filename);
 
     vector<string> input_filenames;
     input_filenames.push_back( parameters_filename.substr( parameters_filename.find_last_of('/') + 1) );
@@ -192,6 +191,32 @@ int main(int argc, char **argv) {
     //Need to read files to calculate minimum and maximum bounds
     ASTRONOMY_PARAMETERS *ap = (ASTRONOMY_PARAMETERS*)malloc(sizeof(ASTRONOMY_PARAMETERS));
     read_astronomy_parameters( parameters_filename.c_str(), ap );
+
+    /*
+     *  Maybe not re-writing the parameter file is causing issues.
+     */
+    char path[256];
+    string short_name = parameters_filename.substr(parameters_filename.find_last_of('/') + 1); 
+
+    if ( !boost::filesystem::exists( parameters_filename ) ) { 
+        log_messages.printf(MSG_CRITICAL, "input filename '%s' does not exist, cannot copy to download directory.\n", parameters_filename.c_str());
+        exit(1);
+    }   
+
+    retval = config.download_path( short_name.c_str(), path );
+    if (retval) {
+        log_messages.printf(MSG_CRITICAL, "can't get download path for file '%s', error: %s\n", short_name.c_str(), boincerror(retval));
+        exit(1);
+    }   
+
+//    if ( boost::filesystem::exists(path) ) { 
+        log_messages.printf(MSG_CRITICAL, "input file '%s' already exists in downlaod directory hierarchy as '%s', not copying.\n", short_name.c_str(), path);
+//    } else {
+        fwrite_astronomy_parameters(stdout, ap);
+        exit(0);
+        write_astronomy_parameters(path, ap);
+//    }
+
 
     /*  TODO: clients don't accept JSON parameter files correctly
     //Create the JSON parameter file
