@@ -144,28 +144,13 @@ int main(int argc, char **argv) {
     vector<double> min_bound(min_b, min_b + 6);
     vector<double> max_bound(max_b, max_b + 6);
 
-    double timestep = (0.1 * 0.1) * sqrt(M_PI * (4.0/3.0) * max_radius_2 * max_radius_2 * max_radius_2 / (max_mass_1 + max_mass_2));
-    double step_fpops = (6 + 3 + (7 * 5) + (2 * 10) + 20) * (n_bodies * n_bodies);
-    double fpops = step_fpops * (max_simulation_time / timestep);
-
-    double multiplier = 5.4;
-    double credit = multiplier * 5 * fpops / 1000000000000.0;
-
-    double rsc_fpops_est = fpops * 10; 
-    double rsc_fpops_bound = fpops * 100000;
     double rsc_disk_bound = 50 * 1024 * 1024; // 50MB
 
     cout.precision(15);
-    cout << "credit: " << credit << endl;
-    cout << "rsc_fpops_est: " << rsc_fpops_est << endl;
-    cout << "rsc_fpops_bound: " << rsc_fpops_bound << endl;
-    cout << "rsc_disk_bound: " << rsc_disk_bound << endl;
 
     ostringstream oss;
-    oss << "<credit>"           << credit           << "</credit>" << endl;
-    oss << "<rsc_fpops_est>"    << rsc_fpops_est    << "</rsc_fpops_est>" << endl;
-    oss << "<rsc_fpops_bound>"  << rsc_fpops_bound  << "</rsc_fpops_bound>" << endl;
     oss << "<rsc_disk_bound>"   << rsc_disk_bound   << "</rsc_disk_bound>" << endl;
+    oss << "<n_bodies>"         << n_bodies         << "</n_bodies>" << endl;       //this is needed to calculate the fpops based on the input parameters
 
     string extra_xml = oss.str();
 
