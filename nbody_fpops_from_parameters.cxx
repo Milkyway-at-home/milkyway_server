@@ -31,16 +31,26 @@ void calculate_fpops(const vector<double> &parameters, double &rsc_fpops_est, do
 
     uint64_t n_bodies = 0;
     try {
-        parse_xml<uint64_t>(workunit_extra_xml, "n_bodies");
+        n_bodies = parse_xml<uint64_t>(workunit_extra_xml, "n_bodies");
     } catch (string ex_msg) {
         cerr << "ERROR parsing workunit_extra_xml on " << __FILE__ << ":" << __LINE__ << endl;
         cerr << "\t" << ex_msg << endl;
+        cerr << "xml is:" << endl;
+        cerr << workunit_extra_xml << endl;
         exit(1);
     }
+
 
     double timestep = (0.1 * 0.1) * sqrt(M_PI * (4.0/3.0) * max_radius * max_radius * max_radius / (mass_1 + mass_2));
     double step_fpops = (6 + 3 + (7 * 5) + (2 * 10) + 20) * (n_bodies * n_bodies);
     double fpops = step_fpops * (simulation_time / timestep);
+
+//    cerr << "workunit_extra_xml: " << workunit_extra_xml << endl;
+//    cerr << "n_bodies: " << n_bodies << endl;
+//    cerr << "parameters: " << vector_to_string(parameters) << endl;
+//    cerr << "timestep: " << timestep << endl;
+//    cerr << "step_fpops: " << step_fpops << endl;
+//    cerr << "fpops: " << fpops << endl;
 
     rsc_fpops_est = fpops * 10;
     rsc_fpops_bound = fpops * 100000;
