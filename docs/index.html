@@ -18,6 +18,23 @@
                 // ]]>
                 </script>
 
+<style type="text/css">
+    div.ex
+    {
+        width:99%;
+        padding:3px;
+        border:3px solid gray;
+        margin:0px;
+    }
+
+    pre
+    {
+        white-space: pre-wrap; /* CSS2.1 compliant */
+        white-space: -moz-pre-wrap; /* Mozilla-based browsers */
+        white-space: o-pre-wrap; /* Opera 7+ */
+    }
+
+</style>
 
 </head>
 <body>
@@ -43,21 +60,26 @@ The <tt>stream_fit_start_search</tt> and <tt>nbody_start_search</tt> binaries ut
 
 If you run the <tt>stream_fit_start_search</tt> without any command line arguments it will walk you through the missing ones:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./stream_fit_start_search 
 ERROR: argument '--parameters' required and not found.
 </pre>
+</div>
 
 The <tt>--parameters</tt> argument specifies which input parameter file (which specifies information about the stream and the bounds of the parameters) should be used.
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./stream_fit_start_search --parameters /boinc/src/milkyway_separation_assimilator/parameter_files/parameters-09-2s.txt 
 parsed argument '--parameters' successfully: /boinc/src/milkyway_separation_assimilator/parameter_files/parameters-09-2s.txt
 ERROR: argument '--stars' required and not found.
 </pre>
+</div>
 
 The <tt>--stars</tt> argument specifies the input file with information about the stars in that slice of the sky. If these are both specified it will print out the parameter file (for double checking) and prompt for a search name:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./stream_fit_start_search --parameters /boinc/src/milkyway_separation_assimilator/parameter_files/parameters-09-2s.txt --stars /boinc/src/milkyway_separation_assimilator/star_files/stars-9.txt 
 parsed argument '--parameters' successfully: /boinc/src/milkyway_separation_assimilator/parameter_files/parameters-09-2s.txt
@@ -124,6 +146,7 @@ rsc_fpops_bound: 2.9603477899564e+16
 rsc_disk_bound: 15000000
 ERROR: argument '--search_name' required and not found.
 </pre>
+</div>
 
 <p>
 Note that it will let you know if the parameter files already exist in the BOINC download directory hierarchy (see the bold lines). <b>The input files to BOINC workunits are read only</b>. This means if you use incorrect input files, you cannot just delete them from the download hierarchy and reuse the same file name.  This is because workunts the users have will cache those input files and continue to use the old incorrect ones.  If this happens you need to use new input file names.
@@ -149,9 +172,11 @@ Argument '--global_best_weight &lt;F&gt;' not found, using default of 1.5.
 Argument '--local_best_weight &lt;F&gt;' not found, using default of 1.5.
 Argument '--initial_velocity_scale &lt;F&gt;' not found, using default of 0.25.
 </pre>
+</div>
 
 And for differential evolution the default search parameters are (along with their command line options):
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./stream_fit_start_search --parameters /boinc/src/milkyway_separation_assimilator/parameter_files/parameters-09-2s.txt --stars /boinc/src/milkyway_separation_assimilator/star_files/stars-9.txt --search_name de_separation_09_2s_sample_2
 Argument '--population_size' not specified, using default of 200.
@@ -165,6 +190,7 @@ Argument '--number_pairs &lt;I&gt;' not found, using default of 1.
 Argument '--parent_selection &lt;S&gt;' not found, using default of 'best'.
 Argument '--recombination_selection &lt;S&gt;' not found, using default of 'binary'.
 </pre>
+</div>
 
 <p>
 You can ignore the <tt>--maximum_iterations</tt> argument as this is used for stand alone iterative evolutionary algorithms.  If you specify <tt>--maximum_created</tt> the search will only generate that many workunits.  If you specify <tt>--maximum_reported</tt> the search will stop generating workunits after it has received that many results.
@@ -241,6 +267,7 @@ For more information about these, I recommend reading the related work section o
 
 Starting an n-body simulation search is almost identical to starting a stream fit search, except that you also have to specify the min and max search parameters and number of bodies on the command line, e.g.:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./nbody_start_search --min_simulation_time 1.0 --min_orbit_time 0.01 --min_radius_1 1.0 --min_radius_2 0.1 --min_mass_1 1.0 --min_mass_2 0.1 --max_simulation_time 3.0 --max_orbit_time 1.0 --max_radius_1 15.0 --max_radius_2 1.0 --max_mass_1 15.0 --max_mass_2 1.0 --n_bodies 100000 --parameters /boinc/src/milkyway_nbody_assimilator/data/100k_EMD_RUN_fix.lua --histogram /boinc/src/milkyway_nbody_assimilator/data/100k_EMD_RUN_fix.hist --search_name de_nbody_100K_Plum_EMD
 parsed argument '--min_simulation_time' successfully: 1
@@ -275,11 +302,13 @@ Argument '--parent_selection &lt;S&gt;' not found, using default of 'best'.
 Argument '--recombination_selection &lt;S&gt;' not found, using default of 'binary'.
 parsed argument '--search_name' successfully: de_nbody_100K_Plum_EMD
 </pre>
+</div>
 
 <h3>Stopping Searches</h3>
 
 Stopping searches can be done using TAO's <tt>tao_stop_search</tt> binary 'out of the box' for either the nbody simulation or stream fit searches.  If you run the binary, it will step you through the command line arguments required to stop a search and what your options are.  If you run it, it will ask what type of search you would like to stop based on the client application name (either a stream_fit -- milkyway; or a body -- milkyway_nbody):
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./tao_stop_search 
 Need to specify which application with the '--app <name>' command line argument.
@@ -287,9 +316,11 @@ Applications in the database (name, id):
     milkyway, 3
     milkyway_nbody, 7
 </pre>
+</div>
 
 When you run it, specifying the application name but don't specify the name of the search, it wil prompt you to specify the search name and give you a listing of searches currently in the database (for that particular application), as well as if they are currently running or if have been stopped previously:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./tao_stop_search --app milkyway
 parsed argument '--app' successfully: milkyway
@@ -302,18 +333,22 @@ Searches for app id 3 (name, id, status):
     ps_separation_10_2s_sample_2, 9, running
     ps_separation_14_2s_05_3_test_1, 8, finished
 </pre>
+</div>
 
 When you stop a search, (unlike before) the <tt>./stop</tt> script does not need to be run previously. When you run <tt>./tao_stop_search</tt> specifying the app and search name, it should report that the search is successfuly stopped (and report any errors that occured otherwise):
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./tao_stop_search --app milkyway --search_name ps_separation_10_2s_sample_2
 parsed argument '--app' successfully: milkyway
 parsed argument '--search_name' successfully: ps_separation_10_2s_sample_2
 Search successfully stopped.
 </pre>
+</div>
 
 When you stop a search it will leave all it's information in the databse. If you want to <b>delete</b> a search, you can add the <tt>--delete</tt> command line argument, which will completely remove it from the database.  In this case, you <b>do</b> have to run the <tt>./stop</tt> script before doing a delete operation:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ sudo -u boinc ./stop
 Entering DISABLED mode
@@ -341,6 +376,7 @@ Successfully deleted search with queries:
     DELETE FROM tao_workunit_information WHERE search_name = 'ps_separation_14_2s_05_3_test_1' AND app_id = 3'.
 Search successfully stopped.
 </pre>
+</div>
 
 
 
@@ -348,6 +384,7 @@ Search successfully stopped.
 
 Checking the status of searches can also be done 'out of the box' for either the nbody or stream fit searches using the <tt>tao_search_status</tt> binary. Using it is very similar to stopping a search.  If you have no command line options it will ask you for which application and list the available ones:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./tao_search_status 
 Need to specify which application with the '--app <name>' command line argument.
@@ -355,9 +392,11 @@ Applications in the database (name, id):
     milkyway, 3
     milkyway_nbody, 7
 </pre>
+</div>
 
 If you specify an application but do not specify a search name, it will list you the search names for the specified application, and if they are running or not:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./tao_search_status --app milkyway
 parsed argument '--app' successfully: milkyway
@@ -369,9 +408,11 @@ Searches for app id 3 (name, id, status):
     ps_separation_10_2s_sample_2, 9, running
     ps_separation_14_2s_05_3_test_1, 8, finished
 </pre>
+</div>
 
 If you specify both the application and search name, it will report all the information about the search in the database.  It's parameters along with every individual:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./tao_search_status --app milkyway --search_name ps_separation_10_2s_sample_2
 parsed argument '--app' successfully: milkyway
@@ -418,9 +459,11 @@ parsed argument '--search_name' successfully: ps_separation_10_2s_sample_2
 
 You can print the best X individuals by using the '--print_best &lt;int&gt;' command line argument.
 </pre>
+</div>
 
 If you use the <tt>--print_best</tt> command line argument, it will also print out the fitness and parameters of the X best individuals in ascenting order (the one at the bottom will have the best fitness) along with the best, median, average and worst fitness of the individuals in the search:
 
+<div class="ex">
 <pre>
 deselt@milkyway:/boinc/milkyway/bin$ ./tao_search_status --app milkyway --search_name ps_separation_10_2s_sample_2 --print_best 10
 parsed argument '--app' successfully: milkyway
@@ -445,11 +488,13 @@ The best 11 of 200 individuals are (position, fitness, parameters, metadata):
     130, -2.94719, [0.64056244510068, 10.6868465486039, -6.35417504721908, 194.110867225967, 44.949866627476, 3.11271071410224, -1.47916844425308, 7.5739454351953, -0.709771152632807, 191.936181631545, 27.782034354476, -0.536188058562095, -6.28318530717959, 6.12468341810018], ''
     3, -2.94688, [0.605724239573602, 10.553379949651, -6.17503795676321, 195.6864294928, 47.1995527852288, 2.93969043645403, -1.64206011178062, 7.25629449616176, -0.565899483040795, 192.789445078507, 27.7535439689067, -0.607007735246566, -6.28318530717959, 6.12885800104327], ''
 </pre>
+</div>
 
 <h3>Assimilator, Validation and Work Generation</h3>
 
 Assimilation and validation are completed handled 'out of the box' by TAO. The work similar to the standard boinc assimilation and validation daemons with similar command line options.  They are in MilkyWay@Home's <tt>config.xml</tt> as follows:
 
+<div class="ex">
 <pre>
 <code>
 237     &lt;daemon&gt;
@@ -477,11 +522,13 @@ Assimilation and validation are completed handled 'out of the box' by TAO. The w
 265     &lt;/daemon&gt;
 </code>
 </pre>
+</div>
 
 The stream fit workunits have their credit pre-calculated and specified in the workunits XML, so the <tt>--credit_from_wu</tt> command line argument must be specified. The <tt>-d</tt> argument specifies how much debugging information is printed to the log files, which can be found in <tt>/boinc/milkyway/log_milkyway/</tt>.
 
 Work generation for the stream fit searches is 'out of the box', but the nbody work generation needs some tweaking as the number of fpops (floating point operations) for each workunit is dependent on the input parameters and cannot be precalculated. To do this, it is compiled with the <tt>-DFPOPS_FROM_PARAMETERS</tt> directive (see the <a href="https://github.com/Milkyway-at-home/milkyway_server/blob/master/CMakeLists.txt">CMakeLists.txt</a> file) with the <a href="https://github.com/Milkyway-at-home/milkyway_server/blob/master/nbody_fpops_from_parameters.cxx">nbody_fpops_from_parameters.cxx</a> file. Which will calculate the fpops for each workunit.  Further, the nbody workunits also need to be seeded, so this can be specified with the <tt>--requires_seeding</tt> command line option to the work generator.  As such, these are in the <tt>config.xml</tt> file as:
 
+<div class="ex">
 <pre>
 <code>
 249     &lt;daemon&gt;
@@ -497,6 +544,7 @@ Work generation for the stream fit searches is 'out of the box', but the nbody w
 271     &lt;/daemon&gt;
 </code>
 </pre>
+</div>
 
 And as before, the amount of debugging information printed out to the logs can be specified with the <tt>-d</tt> command line option (lower numbers are less output).
 
