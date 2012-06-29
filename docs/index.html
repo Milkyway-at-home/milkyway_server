@@ -448,5 +448,37 @@ The best 11 of 200 individuals are (position, fitness, parameters, metadata):
 
 <h3>Assimilator, Validation and Work Generation</h3>
 
+Assimilation and validation are completed handled 'out of the box' by TAO. The work similar to the standard boinc assimilation and validation daemons with similar command line options.  They are in MilkyWay@Home's <tt>config.xml</tt> as follows:
+
+<pre>
+<code>
+237     &lt;daemon&gt;
+238       &lt;cmd&gt;
+239         stream_fit_validator -d 3 --app milkyway --credit_from_wu
+240       &lt;/cmd&gt;
+241     &lt;/daemon&gt;
+242 
+243     &lt;daemon&gt;
+244       &lt;cmd&gt;
+245         stream_fit_assimilator --app milkyway
+246       &lt;/cmd&gt;
+247     &lt;/daemon&gt;
+...
+255     &lt;daemon&gt;
+256       &lt;cmd&gt;
+257         nbody_validator -d 3 --app milkyway_nbody
+258       &lt;/cmd&gt;
+259     &lt;/daemon&gt;
+260 
+261     &lt;daemon&gt;
+262       &lt;cmd&gt;
+263         nbody_assimilator --app milkyway_nbody
+264       &lt;/cmd&gt;
+265     &lt;/daemon&gt;
+</code>
+</pre>
+
+The stream fit workunits have their credit pre-calculated and specified in the workunits XML, so the <tt>--credit_from_wu</tt> command line argument must be specified. The <tt>-d</tt> argument specifies how much debugging information is printed to the log files, which can be found in <tt>/boinc/milkyway/log_milkyway/</tt>.
+
 </body>
 </html>
