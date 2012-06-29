@@ -25,6 +25,7 @@
         padding:3px;
         border:3px solid gray;
         margin:0px;
+        background-color:#e0ffff;
     }
 
     pre
@@ -496,7 +497,6 @@ Assimilation and validation are completed handled 'out of the box' by TAO. The w
 
 <div class="ex">
 <pre>
-<code>
 237     &lt;daemon&gt;
 238       &lt;cmd&gt;
 239         stream_fit_validator -d 3 --app milkyway --credit_from_wu
@@ -520,7 +520,6 @@ Assimilation and validation are completed handled 'out of the box' by TAO. The w
 263         nbody_assimilator --app milkyway_nbody
 264       &lt;/cmd&gt;
 265     &lt;/daemon&gt;
-</code>
 </pre>
 </div>
 
@@ -530,7 +529,6 @@ Work generation for the stream fit searches is 'out of the box', but the nbody w
 
 <div class="ex">
 <pre>
-<code>
 249     &lt;daemon&gt;
 250       &lt;cmd&gt;
 251         stream_fit_work_generator -d 3 --app milkyway
@@ -542,7 +540,6 @@ Work generation for the stream fit searches is 'out of the box', but the nbody w
 269         nbody_work_generator -d 3 --app milkyway_nbody --requires_seeding
 270       &lt;/cmd&gt;
 271     &lt;/daemon&gt;
-</code>
 </pre>
 </div>
 
