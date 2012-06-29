@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1" />
+<title>Milkyway Server Usage</title>
+
+                <script type="text/javascript">
+                // <![CDATA[
+                        window.onload = function () {
+                                var elems = document.getElementsByTagName ("span")
+
+                                for (var i = 0; i < elems.length; ++i)
+                                        if (elems[i].className == "email") {
+                                                var mail = elems[i].innerHTML.replace (/ AT /g, "@").replace (/ DOT /g, ".")
+                                                elems[i].innerHTML = '<a href="mailto:' + mail + '">' + mail + '</a>'
+                                        }
+                        }
+                // ]]>
+                </script>
+
+
+</head>
+<body>
+<h2>Milkyway Server Usage</h2>
+
+Due to the binaries utilizing the BOINC packages, they have to be located and run within your project's bin directory. If you look at the source code for the MilkyWay@Home server, it uses the <a href="https://github.com/Milkyway-at-home/milkyway_server/blob/master/update_binaries.sh">update_binaries.sh</a> shell script to copy the binaries generated into MilkyWay@Home's bin directory. 
+
+<h3>Starting Searches</h3>
+
+<h3>Stopping Searches</h3>
+
+<pre>
+deselt@milkyway:/boinc/milkyway/bin$ ./tao_stop_search 
+Need to specify which application with the '--app <name>' command line argument.
+Applications in the database (name, id):
+    milkyway, 3
+    milkyway_nbody, 7
+</pre>
+
+<pre>
+deselt@milkyway:/boinc/milkyway/bin$ ./tao_stop_search --app milkyway
+parsed argument '--app' successfully: milkyway
+Need to specify which search with the '--search_name <name>' command line argument.
+Searches for app id 3 (name, id): 
+Searches for app id 3 (name, id, status): 
+    de_separation_14_2s_05_3_test_1_rand, 4, finished
+    de_separation_14_2s_05_3_test_1, 3, finished
+    de_separation_14_2s_null_3_test1, 2, finished
+    ps_separation_10_2s_sample_2, 9, running
+    ps_separation_14_2s_05_3_test_1, 8, finished
+</pre>
+
+
+
+
+<h3>Checking Search Status</h3>
+
+<pre>
+/boinc/milkyway/bin$ ./tao_search_status 
+Need to specify which application with the '--app <name>' command line argument.
+Applications in the database (name, id):
+    milkyway, 3
+    milkyway_nbody, 7
+</pre>
+
+<pre>
+<code>
+/boinc/milkyway/bin$ ./tao_search_status --app milkyway
+parsed argument '--app' successfully: milkyway
+Need to specify which search with the '--search_name <name>' command line argument.
+Searches for app id 3 (name, id, status): 
+    de_separation_14_2s_05_3_test_1_rand, 4, finished
+    de_separation_14_2s_05_3_test_1, 3, finished
+    de_separation_14_2s_null_3_test1, 2, finished
+    ps_separation_10_2s_sample_2, 9, running
+    ps_separation_14_2s_05_3_test_1, 8, finished
+</code>
+</pre>
+
+<pre>
+<code>
+/boinc/milkyway/bin$ ./tao_search_status --app milkyway --search_name ps_separation_10_2s_sample_2
+parsed argument '--app' successfully: milkyway
+parsed argument '--search_name' successfully: ps_separation_10_2s_sample_2
+[ParticleSwarmDB 
+    id = 9
+    name = 'ps_separation_10_2s_sample_2'
+    inertia = 0.75
+    global_best_weight = 1.5
+    local_best_weight = 1.5
+    initial_velocity_scale = 0.25
+    current_individual = 11
+    initialized_individuals = 200
+    current_iteration = 0
+    maximum_iterations = 0
+    individuals_created = 96411
+    maximum_created = 0
+    individuals_reported = 6944
+    maximum_reported = 0
+    population_size = 200
+    min_bound = '[0.3, 1, -20, 165, 2.3, -6.28318530717959, -6.28318530717959, 0.1, -20, 165, 2.4, -6.28318530717959, -6.28318530717959, 0.1]'
+    max_bound = '[1, 30, 20, 227, 72.4, 6.28318530717959, 6.28318530717959, 20, 20, 227, 72.4, 6.28318530717959, 6.28318530717959, 20]'
+    app_id = 3
+]
+    [Particle
+        particle_swarm_id = 9
+        position = 0
+        local_best_fitness = -2.95667
+        parameters = '[0.621634413643444, 11.3592844202588, -20, 199.151865476552, 46.9191625742572, 3.88855951411151, -2.59753175034031, 5.80374104990708, -0.520197084027315, 191.466864855005, 29.2028499843234, -1.73899892223015, -6.28318530717959, 4.61383964293284]'
+        velocity = '[0.0377087042500848, 1.62449614231727, 4.33422751629531, 6.53592885136391, -4.82884440111757, 1.91004074226858, 0.911645973788596, -2.84537987887243, 0.0682160233759563, -2.79149598453473, 2.85342664511826, -2.20963430236297, 4.88924918329303e-08, -3.42910304360551]'
+        local_best = '[0.555406614193454, 8.73710101660458, -16.8760167823823, 189.02911607925, 66.3855164067686, 0.80778185891985, -6.01748041312372, 10.3181785502518, -0.607560208756554, 196.092266769036, 24.6616272974731, 2.85661106085672, -6.28318530717959, 10.6627155793275]'
+        seed = 0
+    ]
+    ...
+    [Particle
+        particle_swarm_id = 9
+        position = 199
+        local_best_fitness = -2.98189
+        parameters = '[0.618654774207537, 10.8472571747525, -6.26942287838657, 195.469310763927, 39.6046808039921, 2.39475128790968, -1.26909842921336, 7.85638982079557, -0.877305744882567, 192.780699305399, 30.4753096579711, -0.624402086984643, -6.28318530717936, 6.87561102128358]'
+        velocity = '[-0.00115234098645506, -0.0203319015828465, 0.00923968471739939, 0.0335611113403493, -2.77561714721248, 0.0536147262050219, -0.0401754094274429, -0.0647197757384186, 0.0202014791220733, 0.00937701231594195, -0.262199264778197, 0.000191802750241887, 2.25153229393982e-13, -0.0744142626444022]'
+        local_best = '[0.695559747706563, 12.5924604080653, -6.8327525866863, 194.168676092725, 2.3, -0.907497106947218, 0.987198769911825, 11.4865058568865, -2.72245068350373, 192.722392572929, 46.8809234338924, -0.726920068838745, -6.28318530717959, 11.3789782028016]'
+        seed = 0
+    ]
+
+You can print the best X individuals by using the '--print_best <int>' command line argument.
+</code>
+</pre>
+
+<pre>
+<code>
+/boinc/milkyway/bin$ ./tao_search_status --app milkyway --search_name ps_separation_10_2s_sample_2 --print_best 10
+parsed argument '--app' successfully: milkyway
+parsed argument '--search_name' successfully: ps_separation_10_2s_sample_2
+...
+parsed argument '--print_best' successfully: 10
+best fitness: -2.94688
+median fitness: -2.95928
+average fitness: -2.96098
+worst fitness: -2.98703
+
+The best 11 of 200 individuals are (position, fitness, parameters, metadata):
+    82, -2.94869, [0.618745095220644, 8.58454657821037, -10.1569419239194, 165, 64.8426361539719, 4.92591123129646, -3.73578335673276, 14.8669154515619, -0.797348901021088, 192.625591591706, 25.4533119540938, 3.45339444570894, 3.5017994754653, 5.70532899225279], ''
+    108, -2.94868, [0.537779376888376, 11.8858419236721, -5.85346596463139, 197.708009415674, 2.3, -0.388882520008274, -1.23386726180218, 9.77064169734694, -1.07083701149625, 190.905618777002, 29.9212570868006, 2.15901978201623, -6.28318530717959, 3.67710783886896], ''
+    182, -2.94849, [0.637387169616782, 10.6868736843629, -6.1648343207396, 198.53358731381, 51.2823826217887, 2.47033505470172, -1.5013839202236, 7.31385317624045, -0.587035086748135, 191.776312617414, 25.5504934847835, -0.355309055820077, -6.28318530717959, 6.0124835856002], ''
+    188, -2.94821, [0.640812235663328, 9.38488713962676, -5.5785957446789, 194.577222294901, 8.53330913741534, 1.77113510932504, -1.59734033914, 8.07766664977023, -0.716338225407295, 192.321122848445, 25.8015524873966, -0.420744178906514, -5.81328170268211, 5.01494569868247], ''
+    30, -2.94761, [0.658889102038651, 11.126981432889, -6.32696352192443, 193.597844781593, 13.8737450603115, 3.03840231877617, -1.19264495135978, 7.89066268527659, -0.805805166613402, 192.673489497524, 25.8888394240358, -0.576232336555298, -6.27764782582176, 4.87500463484209], ''
+    143, -2.94747, [0.619837529570583, 10.3263225013638, -6.67502667981068, 195.040176094184, 43.1968996746504, 3.32288928214982, -1.78926503660272, 7.06974874498268, -0.658749177703002, 191.494909449045, 29.2536580834232, -0.553697755030244, -6.28318530717959, 6.00415798017726], ''
+    33, -2.94743, [0.649126302459326, 9.01499343675167, -5.58100147732427, 188.230768636163, 64.7562098445984, 5.02283473408045, 1.99342088315494, 12.9788325989752, -0.821336796980621, 189.576017360026, 24.4281945613344, 2.87396554635134, 6.28318530717959, 5.69946657880664], ''
+    151, -2.94738, [0.621071720163947, 10.8595795310652, -6.83019420148458, 194.751169997846, 46.6563144543792, 2.89934082749834, -1.59244094603213, 7.94482364781986, -0.680266211974275, 191.4711162575, 27.0749144566038, -0.847976615268898, -6.28318530717959, 6.22526089598598], ''
+    191, -2.94725, [0.635171784621117, 10.6579181545044, -6.41097651832245, 193.927029773754, 45.4987994250324, 3.10164393776464, -1.51127034277273, 7.48431809147393, -0.676634779322796, 192.028834657503, 27.602429960748, -0.527044525393978, -6.28318530717959, 6.26930970315429], ''
+    130, -2.94719, [0.64056244510068, 10.6868465486039, -6.35417504721908, 194.110867225967, 44.949866627476, 3.11271071410224, -1.47916844425308, 7.5739454351953, -0.709771152632807, 191.936181631545, 27.782034354476, -0.536188058562095, -6.28318530717959, 6.12468341810018], ''
+    3, -2.94688, [0.605724239573602, 10.553379949651, -6.17503795676321, 195.6864294928, 47.1995527852288, 2.93969043645403, -1.64206011178062, 7.25629449616176, -0.565899483040795, 192.789445078507, 27.7535439689067, -0.607007735246566, -6.28318530717959, 6.12885800104327], ''
+
+</code>
+</pre>
+<h3>Assimilator, Validation and Work Generation</h3>
+
+</body>
+</html>
