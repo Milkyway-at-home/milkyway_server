@@ -88,7 +88,7 @@ void create_json_file(string filename, ASTRONOMY_PARAMETERS *ap) {
     }
 
     if ( boost::filesystem::exists(path) ) {
-        log_messages.printf(MSG_CRITICAL, "input filename '%s' already exists, not copying to download directory.\n", path);
+        log_messages.printf(MSG_CRITICAL, "\033[1minput filename '%s' already exists, not copying to download directory.\033[0m\n", path);
         return;
     }
 
@@ -213,7 +213,7 @@ int main(int argc, char **argv) {
     cout << endl << endl;
 
     if ( boost::filesystem::exists(path) ) { 
-        log_messages.printf(MSG_CRITICAL, "input file '%s' already exists in downlaod directory hierarchy as '%s', not copying.\n", short_name.c_str(), path);
+        log_messages.printf(MSG_CRITICAL, "\033[1minput file '%s' already exists in download directory hierarchy as '%s', not copying.\033[0m\n", short_name.c_str(), path);
     } else {
         exit(0);
         write_astronomy_parameters(path, ap);
