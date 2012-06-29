@@ -480,5 +480,25 @@ Assimilation and validation are completed handled 'out of the box' by TAO. The w
 
 The stream fit workunits have their credit pre-calculated and specified in the workunits XML, so the <tt>--credit_from_wu</tt> command line argument must be specified. The <tt>-d</tt> argument specifies how much debugging information is printed to the log files, which can be found in <tt>/boinc/milkyway/log_milkyway/</tt>.
 
+Work generation for the stream fit searches is 'out of the box', but the nbody work generation needs some tweaking as the number of fpops (floating point operations) for each workunit is dependent on the input parameters and cannot be precalculated. To do this, it is compiled with the <tt>-DFPOPS_FROM_PARAMETERS</tt> directive (see the <a href="https://github.com/Milkyway-at-home/milkyway_server/blob/master/CMakeLists.txt">CMakeLists.txt</a> file) with the <a href="https://github.com/Milkyway-at-home/milkyway_server/blob/master/nbody_fpops_from_parameters.cxx">nbody_fpops_from_parameters.cxx</a> file. Which will calculate the fpops for each workunit.  Further, the nbody workunits also need to be seeded, so this can be specified with the <tt>--requires_seeding</tt> command line option to the work generator.  As such, these are in the <tt>config.xml</tt> file as:
+
+<pre>
+<code>
+249     &lt;daemon&gt;
+250       &lt;cmd&gt;
+251         stream_fit_work_generator -d 3 --app milkyway
+252       &lt;/cmd&gt;
+253     &lt;/daemon&gt;
+...
+267     &lt;daemon&gt;
+268       &lt;cmd&gt;
+269         nbody_work_generator -d 3 --app milkyway_nbody --requires_seeding
+270       &lt;/cmd&gt;
+271     &lt;/daemon&gt;
+</code>
+</pre>
+
+And as before, the amount of debugging information printed out to the logs can be specified with the <tt>-d</tt> command line option (lower numbers are less output).
+
 </body>
 </html>
