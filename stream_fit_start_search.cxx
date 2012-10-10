@@ -215,7 +215,7 @@ int main(int argc, char **argv) {
     if ( boost::filesystem::exists(path) ) { 
         log_messages.printf(MSG_CRITICAL, "\033[1minput file '%s' already exists in download directory hierarchy as '%s', not copying.\033[0m\n", short_name.c_str(), path);
     } else {
-        exit(0);
+        /* exit(0); */
         write_astronomy_parameters(path, ap);
     }
 
