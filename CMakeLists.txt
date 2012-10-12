@@ -18,7 +18,7 @@ add_subdirectory(tao)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/tao
-    ${PROJECT_SOURCE_DIR}/tao/evolutionary_algorithms
+    ${PROJECT_SOURCE_DIR}/tao/asynchronous_algorithms
     ${PROJECT_SOURCE_DIR}/tao/boinc
     ${PROJECT_SOURCE_DIR}/tao/undvc_common
     ${BOINC_INCLUDE_DIR}
@@ -32,13 +32,14 @@ include_directories(
 
 link_directories(${Boost_LIBRARY_DIRS})
 
+add_definitions( -D_BOINC_ )
 
 add_executable(stream_fit_start_search stream_fit_start_search stream_fit_parameters)
-target_link_libraries(stream_fit_start_search workunit_information DBEvolutionaryAlgorithms EvolutionaryAlgorithms undvc_common ${BOINC_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(stream_fit_start_search workunit_information db_asynchronous_algorithms asynchronous_algorithms undvc_common ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(nbody_start_search nbody_start_search)
-target_link_libraries(nbody_start_search workunit_information DBEvolutionaryAlgorithms EvolutionaryAlgorithms undvc_common ${BOINC_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(nbody_start_search workunit_information db_asynchronous_algorithms asynchronous_algorithms undvc_common ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 
 add_definitions( -DFPOPS_FROM_PARAMETERS )
 add_executable(nbody_work_generator ${PROJECT_SOURCE_DIR}/tao/boinc/tao_work_generator ${PROJECT_SOURCE_DIR}/tao/boinc/workunit_information nbody_fpops_from_parameters)
-target_link_libraries(nbody_work_generator workunit_information DBEvolutionaryAlgorithms EvolutionaryAlgorithms undvc_common ${BOINC_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(nbody_work_generator workunit_information db_asynchronous_algorithms asynchronous_algorithms undvc_common ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})

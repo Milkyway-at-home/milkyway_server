@@ -33,8 +33,8 @@
 
 //From TAO
 #include "tao/boinc/workunit_information.hxx"
-#include "tao/evolutionary_algorithms/particle_swarm_db.hxx"
-#include "tao/evolutionary_algorithms/differential_evolution_db.hxx"
+#include "tao/asynchronous_algorithms/particle_swarm_db.hxx"
+#include "tao/asynchronous_algorithms/differential_evolution_db.hxx"
 #include "tao/undvc_common/arguments.hxx"
 #include "tao/undvc_common/file_io.hxx"
 
