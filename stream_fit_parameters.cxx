@@ -194,7 +194,7 @@ int write_astronomy_parameters(const char* filename, ASTRONOMY_PARAMETERS *ap) {
 void fread_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
     int i, retval;
 
-    retval = fscanf(file, "parameters_version: %lf\n", &ap->parameters_version);
+//    retval = fscanf(file, "parameters_version: %lf\n", &ap->parameters_version);
     if (retval < 1) {
         ap->parameters_version = 0.01;
         //      fprintf(stderr, "Error reading astronomy parameters file. Parameters version not specified\n");
@@ -239,11 +239,11 @@ void fread_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
 
     fscanf(file, "convolve: %d\n", &ap->convolve);
     fscanf(file, "sgr_coordinates: %d\n", &ap->sgr_coordinates);
-    if (ap->parameters_version > 0.01) {
-        fscanf(file, "aux_bg_profile: %d\n", &ap->aux_bg_profile); //vickej2_bg 
-    } else {
+//    if (ap->parameters_version > 0.01) {
+ //       fscanf(file, "aux_bg_profile: %d\n", &ap->aux_bg_profile); //vickej2_bg
+ //       } else {
         ap->aux_bg_profile = 0;
-    }
+//    }
     fscanf(file, "wedge: %d\n", &ap->wedge);
 
     ap->integral = (INTEGRAL**)malloc(sizeof(INTEGRAL*));
@@ -280,10 +280,10 @@ void fread_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
 void fwrite_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
     int i;
 
-    fprintf(file, "parameters_version: %lf\n", ap->parameters_version);
+//    fprintf(file, "parameters_version: %.15lf\n", ap->parameters_version);
 
     fprintf(file, "number_parameters: %d\n", ap->number_background_parameters);
-    fprintf(file, "background_weight: %lf\n", ap->background_weight);
+    fprintf(file, "background_weight: %.15lf\n", ap->background_weight);
     fwrite_double_array(file, "background_parameters", ap->number_background_parameters, ap->background_parameters);
     fwrite_double_array(file, "background_step", ap->number_background_parameters, ap->background_step);
     fwrite_double_array(file, "background_min", ap->number_background_parameters, ap->background_min);
@@ -292,10 +292,10 @@ void fwrite_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
 
     fprintf(file, "number_streams: %d, %d\n", ap->number_streams, ap->number_stream_parameters);
     for (i = 0; i < ap->number_streams; i++) {
-        fprintf(file, "stream_weight: %lf\n", ap->stream_weights[i]);
-        fprintf(file, "stream_weight_step: %lf\n", ap->stream_weight_step[i]);
-        fprintf(file, "stream_weight_min: %lf\n", ap->stream_weight_min[i]);
-        fprintf(file, "stream_weight_max: %lf\n", ap->stream_weight_max[i]);
+        fprintf(file, "stream_weight: %.15lf\n", ap->stream_weights[i]);
+        fprintf(file, "stream_weight_step: %.15lf\n", ap->stream_weight_step[i]);
+        fprintf(file, "stream_weight_min: %.15lf\n", ap->stream_weight_min[i]);
+        fprintf(file, "stream_weight_max: %.15lf\n", ap->stream_weight_max[i]);
         fprintf(file, "optimize_weight: %d\n", ap->stream_weight_optimize[i]);
 
         fwrite_double_array(file, "stream_parameters", ap->number_stream_parameters, ap->stream_parameters[i]);
@@ -307,18 +307,18 @@ void fwrite_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
 
     fprintf(file, "convolve: %d\n", ap->convolve);
     fprintf(file, "sgr_coordinates: %d\n", ap->sgr_coordinates);
-    fprintf(file, "aux_bg_profile: %d\n", ap->aux_bg_profile); //vickej2_bg 
+//    fprintf(file, "aux_bg_profile: %d\n", ap->aux_bg_profile); //vickej2_bg 
     fprintf(file, "wedge: %d\n", ap->wedge);
 
-    fprintf(file, "r[min,max,steps]: %lf, %lf, %d\n", ap->integral[0]->r_min, ap->integral[0]->r_max, ap->integral[0]->r_steps);
-    fprintf(file, "mu[min,max,steps]: %lf, %lf, %d\n", ap->integral[0]->mu_min, ap->integral[0]->mu_max, ap->integral[0]->mu_steps);
-    fprintf(file, "nu[min,max,steps]: %lf, %lf, %d\n", ap->integral[0]->nu_min, ap->integral[0]->nu_max, ap->integral[0]->nu_steps);
+    fprintf(file, "r[min,max,steps]: %.15lf, %.15lf, %d\n", ap->integral[0]->r_min, ap->integral[0]->r_max, ap->integral[0]->r_steps);
+    fprintf(file, "mu[min,max,steps]: %.15lf, %.15lf, %d\n", ap->integral[0]->mu_min, ap->integral[0]->mu_max, ap->integral[0]->mu_steps);
+    fprintf(file, "nu[min,max,steps]: %.15lf, %.15lf, %d\n", ap->integral[0]->nu_min, ap->integral[0]->nu_max, ap->integral[0]->nu_steps);
 
     fprintf(file, "number_cuts: %d\n", ap->number_integrals-1);
     for (i = 1; i < ap->number_integrals; i++) {
-        fprintf(file, "r_cut[min,max,steps][3]: %lf, %lf, %d\n", ap->integral[i]->r_min, ap->integral[i]->r_max, ap->integral[i]->r_steps);
-        fprintf(file, "mu_cut[min,max,steps][3]: %lf, %lf, %d\n", ap->integral[i]->mu_min, ap->integral[i]->mu_max, ap->integral[i]->mu_steps);
-        fprintf(file, "nu_cut[min,max,steps][3]: %lf, %lf, %d\n", ap->integral[i]->nu_min, ap->integral[i]->nu_max, ap->integral[i]->nu_steps);
+        fprintf(file, "r_cut[min,max,steps][3]: %.15lf, %.15lf, %d\n", ap->integral[i]->r_min, ap->integral[i]->r_max, ap->integral[i]->r_steps);
+        fprintf(file, "mu_cut[min,max,steps][3]: %.15lf, %.15lf, %d\n", ap->integral[i]->mu_min, ap->integral[i]->mu_max, ap->integral[i]->mu_steps);
+        fprintf(file, "nu_cut[min,max,steps][3]: %.15lf, %.15lf, %d\n", ap->integral[i]->nu_min, ap->integral[i]->nu_max, ap->integral[i]->nu_steps);
     }
 }
 
