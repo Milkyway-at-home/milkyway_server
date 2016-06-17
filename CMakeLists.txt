@@ -37,6 +37,10 @@ add_definitions( -D_BOINC_ )
 add_executable(stream_fit_start_search stream_fit_start_search stream_fit_parameters)
 target_link_libraries(stream_fit_start_search workunit_information db_asynchronous_algorithms asynchronous_algorithms undvc_common ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 
+add_executable(stream_fit_nm_start_search stream_fit_nm_start_search stream_fit_parameters)
+target_link_libraries(stream_fit_nm_start_search workunit_information db_asynchronous_algorithms asynchronous_algorithms undvc_common ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+
+
 add_executable(nbody_start_search nbody_start_search)
 target_link_libraries(nbody_start_search workunit_information db_asynchronous_algorithms asynchronous_algorithms undvc_common ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 

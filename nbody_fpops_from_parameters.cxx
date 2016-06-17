@@ -67,6 +67,8 @@ void calculate_fpops(const vector<double> &parameters, double &rsc_fpops_est, do
     double step_fpops = (6 + 3 + (7 * 5) + (2 * 10) + 20) * (n_bodies * n_bodies);
     double fpops = step_fpops * (simulation_time / timestep);
 
+    fpops /= 100;
+
 //    cerr << "workunit_extra_xml: " << workunit_extra_xml << endl;
 //    cerr << "n_bodies: " << n_bodies << endl;
 //    cerr << "parameters: " << vector_to_string(parameters) << endl;
