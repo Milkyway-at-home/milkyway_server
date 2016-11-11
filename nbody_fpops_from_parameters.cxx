@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 
-#include "undvc_common/parse_xml.hxx"
+#include "parse_xml.hxx"
 
 using std::cerr;
 using std::endl;

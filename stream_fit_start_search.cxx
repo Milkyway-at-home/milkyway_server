@@ -35,12 +35,12 @@
 #include "util.h"
 
 //From TAO
-#include "tao/boinc/workunit_information.hxx"
-#include "tao/asynchronous_algorithms/particle_swarm_db.hxx"
-#include "tao/asynchronous_algorithms/differential_evolution_db.hxx"
-#include "tao/undvc_common/arguments.hxx"
-#include "tao/undvc_common/vector_io.hxx"
-#include "tao/undvc_common/file_io.hxx"
+#include "boinc/workunit_information.hxx"
+#include "asynchronous_algorithms/particle_swarm_db.hxx"
+#include "asynchronous_algorithms/differential_evolution_db.hxx"
+#include "arguments.hxx"
+#include "vector_io.hxx"
+#include "file_io.hxx"
 
 #include "stream_fit_parameters.hxx"
 
@@ -147,6 +147,7 @@ int main(int argc, char **argv) {
     DB_APP app;
     const char* app_name = "milkyway";
     char buf[256];
+    
     sprintf(buf, "where name='%s'", app_name);
     if (app.lookup(buf)) {
         log_messages.printf(MSG_CRITICAL, "can't find app %s\n", app_name);
@@ -174,10 +175,17 @@ int main(int argc, char **argv) {
     string command_line_options = "";
 
     //Get input filenames (from command line), copy to download directory if needed
-    string parameters_filename, stars_filename;
+    string parameters_filename, stars_filename, bundle_size;
 
+    int WUs_per_bundle = 1;
+    
     get_argument(arguments, "--parameters", true, parameters_filename);
     get_argument(arguments, "--stars", true, stars_filename);
+    if(get_argument(arguments, "--bundle_size" , false, bundle_size))
+    {
+        WUs_per_bundle = stoi( bundle_size );
+    }
+    
 
     copy_file_to_download_dir(stars_filename);
 
@@ -252,6 +260,8 @@ int main(int argc, char **argv) {
     double fpops = 0;
     double fpops_new = 0;
 
+    cout << "Work units per bundle: " << WUs_per_bundle << endl;
+    cout << "FPOPS Calculation for single WU (multiplied by Work Unit Per Bundle at end)" << endl;
     cout << "looping over number intergrals: " << ap->number_integrals << endl;
 
     for (int i = 0; i < ap->number_integrals; i++) {
@@ -288,7 +298,20 @@ int main(int argc, char **argv) {
     cout << "rsc_fpops_est: "   << rsc_fpops_est    << endl;
     cout << "rsc_fpops_bound: " << rsc_fpops_bound  << endl;
     cout << "rsc_disk_bound: "  << rsc_disk_bound   << endl;
+    
+    cout << "Total for Bundle:" << endl;
+    
+    credit *= WUs_per_bundle;
+    rsc_fpops_est *= WUs_per_bundle;
+    rsc_fpops_bound *= WUs_per_bundle;
+    rsc_disk_bound *= WUs_per_bundle;
 
+    cout.precision(15);
+    cout << "total credit: "          << credit           << endl;
+    cout << "total rsc_fpops_est: "   << rsc_fpops_est    << endl;
+    cout << "total rsc_fpops_bound: " << rsc_fpops_bound  << endl;
+    cout << "total rsc_disk_bound: "  << rsc_disk_bound   << endl;
+    
     ostringstream oss;
     oss << "<credit>"           << credit           << "</credit>"          << endl;
     oss << "<rsc_fpops_est>"    << rsc_fpops_est    << "</rsc_fpops_est>"   << endl;
@@ -327,6 +350,7 @@ int main(int argc, char **argv) {
         WorkunitInformation(boinc_db.mysql,
                             ea->get_name(),
                             app_id,
+                            WUs_per_bundle,
                             WORKUNIT_XML,
                             RESULT_XML,
                             input_filenames,

@@ -36,12 +36,12 @@
 #include "util.h"
 
 //From TAO
-#include "tao/boinc/workunit_information.hxx"
-#include "tao/asynchronous_algorithms/particle_swarm_db.hxx"
-#include "tao/asynchronous_algorithms/differential_evolution_db.hxx"
-#include "tao/undvc_common/arguments.hxx"
-#include "tao/undvc_common/vector_io.hxx"
-#include "tao/undvc_common/file_io.hxx"
+#include "boinc/workunit_information.hxx"
+#include "asynchronous_algorithms/particle_swarm_db.hxx"
+#include "asynchronous_algorithms/differential_evolution_db.hxx"
+#include "arguments.hxx"
+#include "vector_io.hxx"
+#include "file_io.hxx"
 
 #include "stream_fit_parameters.hxx"
 
@@ -336,6 +336,7 @@ int main(int argc, char **argv) {
         WorkunitInformation(boinc_db.mysql,
                             ea->get_name(),
                             app_id,
+                            1,
                             WORKUNIT_XML,
                             RESULT_XML,
                             input_filenames,

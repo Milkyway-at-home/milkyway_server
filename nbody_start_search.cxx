@@ -32,11 +32,11 @@
 #include "util.h"
 
 //From TAO
-#include "tao/boinc/workunit_information.hxx"
-#include "tao/asynchronous_algorithms/particle_swarm_db.hxx"
-#include "tao/asynchronous_algorithms/differential_evolution_db.hxx"
-#include "tao/undvc_common/arguments.hxx"
-#include "tao/undvc_common/file_io.hxx"
+#include "boinc/workunit_information.hxx"
+#include "asynchronous_algorithms/particle_swarm_db.hxx"
+#include "asynchronous_algorithms/differential_evolution_db.hxx"
+#include "arguments.hxx"
+#include "file_io.hxx"
 
 
 #define WORKUNIT_XML "milkyway_nbody_wu_new.xml"
@@ -44,6 +44,13 @@
 
 using std::vector;
 using std::string;
+
+/* WORK UNIT BUNDLING IS NOT IMPLEMENTED FOR NBODY
+ * To implement, add a WUs_per_bundle variable
+ * parse --bundle_size from command line
+ * multiply credits/fpops by number of workunits (or calculate fpops for each parameter set?)
+ * Pass WUs_per_bundle to workunit information instead of "1"
+ * Good luck -- Jake */
 
 int main(int argc, char **argv) {
     vector<string> arguments(argv, argv + argc);
@@ -180,6 +187,7 @@ int main(int argc, char **argv) {
         WorkunitInformation(boinc_db.mysql,
                             ea->get_name(),
                             app_id,
+                            1,
                             WORKUNIT_XML,
                             RESULT_XML,
                             input_filenames,
