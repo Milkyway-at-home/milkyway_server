@@ -203,6 +203,10 @@ void fread_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
 
     fscanf(file, "number_parameters: %d\n", &ap->number_background_parameters);
     fscanf(file, "background_weight: %lf\n", &ap->background_weight);
+    fscanf(file, "background_weight_step: %lf\n", &ap->background_weight_step);
+    fscanf(file, "background_weight_min: %lf\n", &ap->background_weight_min);
+    fscanf(file, "background_weight_max: %lf\n", &ap->background_weight_max);
+    fscanf(file, "optimize_background_weight: %d\n", &ap->optimize_background_weight);
 
     fread_double_array(file, "background_parameters", &ap->background_parameters);
     fread_double_array(file, "background_step", &ap->background_step);
@@ -284,6 +288,10 @@ void fwrite_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
 
     fprintf(file, "number_parameters: %d\n", ap->number_background_parameters);
     fprintf(file, "background_weight: %.15lf\n", ap->background_weight);
+    fprintf(file, "background_weight_step: %.15lf\n", ap->background_weight_step);
+    fprintf(file, "background_weight_min: %.15lf\n", ap->background_weight_min);
+    fprintf(file, "background_weight_max: %.15lf\n", ap->background_weight_max);
+    fprintf(file, "optimize_background_weight: %d\n", ap->optimize_background_weight);
     fwrite_double_array(file, "background_parameters", ap->number_background_parameters, ap->background_parameters);
     fwrite_double_array(file, "background_step", ap->number_background_parameters, ap->background_step);
     fwrite_double_array(file, "background_min", ap->number_background_parameters, ap->background_min);
@@ -325,6 +333,11 @@ void fwrite_astronomy_parameters(FILE* file, ASTRONOMY_PARAMETERS *ap) {
 int get_optimized_parameter_count(ASTRONOMY_PARAMETERS *ap) {
     int i, j, count;
     count = 0;
+    if(ap->optimize_background_weight)
+    {
+        count++; 
+    }
+
     for (i = 0; i < ap->number_background_parameters; i++) {
         if (ap->background_optimize[i]) count++;
     }
@@ -341,6 +354,12 @@ void set_astronomy_parameters(ASTRONOMY_PARAMETERS *ap, double* parameters) {
     int i, j;
     int current;
     current = 0;
+    if(ap->optimize_background_weight)
+    {
+        ap->background_weight = parameters[current];
+        current++; 
+    }
+
     for (i = 0; i < ap->number_background_parameters; i++) {
         if (ap->background_optimize[i]) {
             ap->background_parameters[i] = parameters[current];
@@ -368,6 +387,11 @@ void get_search_parameters(ASTRONOMY_PARAMETERS *ap, double** result) {
     current = 0;
     (*result) = (double*)malloc(sizeof(double) * get_optimized_parameter_count(ap));
 
+    if (ap->optimize_background_weight) {
+        (*result)[current] = ap->background_weight;
+        current++;
+    }
+
     for (i = 0; i < ap->number_background_parameters; i++) {
         if (ap->background_optimize[i]) {
             (*result)[current] = ap->background_parameters[i];
@@ -394,6 +418,11 @@ void get_step(ASTRONOMY_PARAMETERS *ap, double** result) {
     int i, j, current;
     current = 0;
     (*result) = (double*)malloc(sizeof(double) * get_optimized_parameter_count(ap));
+
+    if (ap->optimize_background_weight) {
+        (*result)[current] = ap->background_weight_step;
+        current++;
+    }
 
     for (i = 0; i < ap->number_background_parameters; i++) {
         if (ap->background_optimize[i]) {
@@ -423,6 +452,11 @@ void get_min_parameters(ASTRONOMY_PARAMETERS *ap, double** result) {
     current = 0;
     (*result) = (double*)malloc(sizeof(double) * get_optimized_parameter_count(ap));
 
+    if (ap->optimize_background_weight) {
+        (*result)[current] = ap->background_weight_min;
+        current++;
+    }
+
     for (i = 0; i < ap->number_background_parameters; i++) {
         if (ap->background_optimize[i]) {
             (*result)[current] = ap->background_min[i];
@@ -449,6 +483,11 @@ void get_max_parameters(ASTRONOMY_PARAMETERS *ap, double** result) {
     int i, j, current;
     current = 0;
     (*result) = (double*)malloc(sizeof(double) * get_optimized_parameter_count(ap));
+
+    if (ap->optimize_background_weight) {
+        (*result)[current] = ap->background_weight_max;
+        current++;
+    }
 
     for (i = 0; i < ap->number_background_parameters; i++) {
         if (ap->background_optimize[i]) {

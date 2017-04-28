@@ -40,6 +40,10 @@ typedef struct astronomy_parameters {
 
     int number_background_parameters;
     double background_weight;
+    double background_weight_step;
+    double background_weight_min;
+    double background_weight_max;
+    int optimize_background_weight;
     double *background_parameters;
     double *background_step;
     double *background_min;
