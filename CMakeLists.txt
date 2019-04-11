@@ -44,7 +44,7 @@ MESSAGE(STATUS "UNDVC_COMMON library: ${UNDVC_COMMON_LIBRARY}")
 
 FIND_LIBRARY(DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY
     NAMES db_asynchronous_algorithms
-    PATHS ../buildTao/asynchronous_algorithms       #add additional paths here if undvc_common is in a different directory
+    PATHS ../buildTAO/asynchronous_algorithms       #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )
@@ -53,7 +53,7 @@ MESSAGE(STATUS "DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY library: ${DB_ASYNCHRONOUS_AL
 
 FIND_LIBRARY(ASYNCHRONOUS_ALGORITHMS_LIBRARY
     NAMES asynchronous_algorithms
-    PATHS ../buildTao/asynchronous_algorithms       #add additional paths here if undvc_common is in a different directory
+    PATHS ../buildTAO/asynchronous_algorithms       #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )
@@ -61,7 +61,7 @@ MESSAGE(STATUS "ASYNCHRONOUS_ALGORITHMS_LIBRARY library: ${ASYNCHRONOUS_ALGORITH
 
 FIND_LIBRARY(WORKUNIT_INFORMATION_LIBRARY
     NAMES workunit_information
-    PATHS ../buildTao/boinc       #add additional paths here if undvc_common is in a different directory
+    PATHS ../buildTAO/boinc       #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )
@@ -69,7 +69,7 @@ MESSAGE(STATUS "WORKUNIT_INFORMATION_LIBRARY library: ${WORKUNIT_INFORMATION_LIB
 
 FIND_LIBRARY(TAO_UTIL_LIBRARY
     NAMES tao_util
-    PATHS ../buildTao/util       #add additional paths here if undvc_common is in a different directory
+    PATHS ../buildTAO/util       #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )

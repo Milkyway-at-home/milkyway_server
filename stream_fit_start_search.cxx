@@ -171,9 +171,6 @@ int main(int argc, char **argv) {
     //Get the application ID
     int app_id = app.id;         /*  The stream fit application's id is 3. */
 
-    //Get any command line options (none for stream fit)
-    string command_line_options = "";
-
     //Get input filenames (from command line), copy to download directory if needed
     string parameters_filename, stars_filename, bundle_size;
 
@@ -186,6 +183,15 @@ int main(int argc, char **argv) {
         WUs_per_bundle = stoi( bundle_size );
     }
     
+    //Get any command line options
+    string command_line_options;
+    get_argument(arguments, "--command_line", true, command_line_options);
+
+    //pad the command line options with spaces just in case
+    ostringstream cmd_line;
+    cmd_line << " " << command_line_options << " ";
+    command_line_options = cmd_line.str();
+
 
     copy_file_to_download_dir(stars_filename);
 
@@ -277,8 +283,9 @@ int main(int argc, char **argv) {
     double likelihood_flops = number_stars * (ap->convolve * (100.0 + ap->number_streams * 58.0) + 251.0 + ap->number_streams * 12.0 + 54.0);
     cout << "likelihood_flops: " << likelihood_flops << " = " << number_stars << " * (" << ap->convolve << " * (100.0 + " << ap->number_streams << " * 58.0) + 251.0 + " << ap->number_streams << " * 12.0 + 54.0)" << endl;
 
-    double flops = (integral_flops * 100.0 * 100.0 * 100.0) + likelihood_flops;
-    double flops_new = (fpops_new * 100.0 * 100.0) + likelihood_flops;
+    //1.7 accounts for additional computations due to new models.
+    double flops = 1.7 * (integral_flops * 100.0 * 100.0 * 100.0) + likelihood_flops;
+    double flops_new = 1.7 * (fpops_new * 100.0 * 100.0) + likelihood_flops;
     cout << "fpops: " << fpops << endl;
     cout << "fpops_new: " << fpops_new << endl;
 
