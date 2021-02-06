@@ -32,11 +32,11 @@
 #include "util.h"
 
 //From TAO
-#include "boinc/workunit_information.hxx"
-#include "asynchronous_algorithms/particle_swarm_db.hxx"
-#include "asynchronous_algorithms/differential_evolution_db.hxx"
-#include "arguments.hxx"
-#include "file_io.hxx"
+#include <boinc/workunit_information.hxx>
+#include <asynchronous_algorithms/particle_swarm_db.hxx>
+#include <asynchronous_algorithms/differential_evolution_db.hxx>
+#include <arguments.hxx>
+#include <file_io.hxx>
 
 
 #define WORKUNIT_XML "milkyway_nbody_wu_new.xml"
