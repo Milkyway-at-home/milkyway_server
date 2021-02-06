@@ -96,7 +96,7 @@ if(STREAM_NM_SEARCH)
 endif()
 
 if(NBODY_SEARCH)
-    add_executable(nbody_start_search nbody_start_search)
+    add_executable(nbody_start_search nbody_start_search.cxx)
     target_link_libraries(nbody_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 
