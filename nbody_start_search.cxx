@@ -24,20 +24,19 @@
 
 #include <boost/filesystem.hpp>
 
+//From TAO
+#include "boinc/workunit_information.hxx"
+#include "asynchronous_algorithms/particle_swarm_db.hxx"
+#include "asynchronous_algorithms/differential_evolution_db.hxx"
+#include "arguments.hxx"
+#include "file_io.hxx"
+
 //From BOINC
 #include "boinc_db.h"
 #include "error_numbers.h"
 #include "backend_lib.h"
 #include "parse.h"
 #include "util.h"
-
-//From TAO
-#include <boinc/workunit_information.hxx>
-#include <asynchronous_algorithms/particle_swarm_db.hxx>
-#include <asynchronous_algorithms/differential_evolution_db.hxx>
-#include <arguments.hxx>
-#include <file_io.hxx>
-
 
 #define WORKUNIT_XML "milkyway_nbody_wu_new.xml"
 #define RESULT_XML "milkyway_nbody_result.xml"
