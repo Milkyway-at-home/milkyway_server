@@ -1,4 +1,10 @@
 cmake_minimum_required (VERSION 2.6)
+
+#-------SET CMAKE COMPILERS HERE----------
+set(CMAKE_C_COMPILER "/usr/bin/gcc-4.8")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.8")
+#-----------------------------------------
+
 project (MILKYWAY_SERVER)
 # The version number.
 set (TAO_VERSION_MAJOR 1)
