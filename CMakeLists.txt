@@ -1,4 +1,10 @@
 cmake_minimum_required (VERSION 2.6)
+
+#-------SET CMAKE COMPILERS HERE----------
+set(CMAKE_C_COMPILER "/usr/bin/gcc-4.8")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.8")
+#-----------------------------------------
+
 project (MILKYWAY_SERVER)
 # The version number.
 set (TAO_VERSION_MAJOR 1)
@@ -15,6 +21,11 @@ find_package(BOINC REQUIRED)
 find_package(MySQL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 find_package(OpenSSL REQUIRED)
+
+option(STREAM_SEARCH "Build stream_fit_start_search" OFF)
+option(STREAM_NM_SEARCH "Build stream_fit_nm_start_search" OFF)
+option(NBODY_SEARCH "Build nbody_start_search" OFF)
+option(NBODY_WGEN "Build nbody_work_generator" OFF)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/../tao
@@ -80,16 +91,23 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 add_definitions( -D_BOINC_ )
 
-add_executable(stream_fit_start_search stream_fit_start_search stream_fit_parameters)
-target_link_libraries(stream_fit_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+if(STREAM_SEARCH)
+    add_executable(stream_fit_start_search stream_fit_start_search stream_fit_parameters)
+    target_link_libraries(stream_fit_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+endif()
 
-add_executable(stream_fit_nm_start_search stream_fit_nm_start_search stream_fit_parameters)
-target_link_libraries(stream_fit_nm_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+if(STREAM_NM_SEARCH)
+    add_executable(stream_fit_nm_start_search stream_fit_nm_start_search stream_fit_parameters)
+    target_link_libraries(stream_fit_nm_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+endif()
 
+if(NBODY_SEARCH)
+    add_executable(nbody_start_search nbody_start_search.cxx)
+    target_link_libraries(nbody_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+endif()
 
-add_executable(nbody_start_search nbody_start_search)
-target_link_libraries(nbody_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
-
-add_definitions( -DFPOPS_FROM_PARAMETERS )
-add_executable(nbody_work_generator ${PROJECT_SOURCE_DIR}/../tao/boinc/tao_work_generator ${PROJECT_SOURCE_DIR}/../tao/boinc/workunit_information nbody_fpops_from_parameters)
-target_link_libraries(nbody_work_generator ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+if(NBODY_WGEN)
+    add_definitions( -DFPOPS_FROM_PARAMETERS )
+    add_executable(nbody_work_generator ${PROJECT_SOURCE_DIR}/../tao/boinc/tao_work_generator ${PROJECT_SOURCE_DIR}/../tao/boinc/workunit_information nbody_fpops_from_parameters)
+    target_link_libraries(nbody_work_generator ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+endif()
