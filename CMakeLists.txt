@@ -22,11 +22,11 @@ find_package(MySQL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 find_package(OpenSSL REQUIRED)
 
-option(STREAM_SEARCH "Build stream_fit_start_search" OFF)
-option(STREAM_NM_SEARCH "Build stream_fit_nm_start_search" OFF)
-option(STREAM_VALIDATOR "Build stream_fit_validator" OFF)
-option(NBODY_SEARCH "Build nbody_start_search" OFF)
-option(NBODY_WGEN "Build nbody_work_generator" OFF)
+option(STREAM_SEARCH "Build stream_fit_start_search" ON)
+option(STREAM_NM_SEARCH "Build stream_fit_nm_start_search" ON)
+option(STREAM_VALIDATOR "Build stream_fit_validator" ON)
+option(NBODY_SEARCH "Build nbody_start_search" ON)
+option(NBODY_WGEN "Build nbody_work_generator" ON)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/../tao
