@@ -1,8 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 
 #-------SET CMAKE COMPILERS HERE----------
-set(CMAKE_C_COMPILER "/usr/bin/gcc-4.8")
-set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.8")
+#set(CMAKE_C_COMPILER "/usr/bin/gcc-4.8")
+#set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.8")
 #-----------------------------------------
 
 project (MILKYWAY_SERVER)
@@ -10,7 +10,7 @@ project (MILKYWAY_SERVER)
 set (TAO_VERSION_MAJOR 1)
 set (TAO_VERSION_MINOR 0)
  
-set(CMAKE_CXX_FLAGS "-g -Wall -O3 -funroll-loops -ftree-vectorize -msse3")
+set(CMAKE_CXX_FLAGS "-g -Wall -O3 -funroll-loops -ftree-vectorize -msse3 -no-pie -D_GLIBCXX_USE_CXX11_ABI=0")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /opt/local/lib)
@@ -24,6 +24,7 @@ find_package(OpenSSL REQUIRED)
 
 option(STREAM_SEARCH "Build stream_fit_start_search" OFF)
 option(STREAM_NM_SEARCH "Build stream_fit_nm_start_search" OFF)
+option(STREAM_VALIDATOR "Build stream_fit_validator" OFF)
 option(NBODY_SEARCH "Build nbody_start_search" OFF)
 option(NBODY_WGEN "Build nbody_work_generator" OFF)
 
@@ -44,7 +45,7 @@ include_directories(
 
 FIND_LIBRARY(UNDVC_COMMON_LIBRARY
     NAMES undvc_common
-    PATHS ../undvc_common/build         #add additional paths here if undvc_common is in a different directory
+    PATHS ../undvc_common/build STATIC         #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )
@@ -55,7 +56,7 @@ MESSAGE(STATUS "UNDVC_COMMON library: ${UNDVC_COMMON_LIBRARY}")
 
 FIND_LIBRARY(DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY
     NAMES db_asynchronous_algorithms
-    PATHS ../buildTAO/asynchronous_algorithms       #add additional paths here if undvc_common is in a different directory
+    PATHS ../buildTAO/asynchronous_algorithms STATIC      #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )
@@ -64,7 +65,7 @@ MESSAGE(STATUS "DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY library: ${DB_ASYNCHRONOUS_AL
 
 FIND_LIBRARY(ASYNCHRONOUS_ALGORITHMS_LIBRARY
     NAMES asynchronous_algorithms
-    PATHS ../buildTAO/asynchronous_algorithms       #add additional paths here if undvc_common is in a different directory
+    PATHS ../buildTAO/asynchronous_algorithms STATIC      #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )
@@ -72,7 +73,7 @@ MESSAGE(STATUS "ASYNCHRONOUS_ALGORITHMS_LIBRARY library: ${ASYNCHRONOUS_ALGORITH
 
 FIND_LIBRARY(WORKUNIT_INFORMATION_LIBRARY
     NAMES workunit_information
-    PATHS ../buildTAO/boinc       #add additional paths here if undvc_common is in a different directory
+    PATHS ../buildTAO/boinc STATIC      #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )
@@ -80,7 +81,7 @@ MESSAGE(STATUS "WORKUNIT_INFORMATION_LIBRARY library: ${WORKUNIT_INFORMATION_LIB
 
 FIND_LIBRARY(TAO_UTIL_LIBRARY
     NAMES tao_util
-    PATHS ../buildTAO/util       #add additional paths here if undvc_common is in a different directory
+    PATHS ../buildTAO/util STATIC      #add additional paths here if undvc_common is in a different directory
                                         #or if it has been build in a different directory
     PATH_SUFFIXES lib
     )
@@ -92,13 +93,19 @@ link_directories(${Boost_LIBRARY_DIRS})
 add_definitions( -D_BOINC_ )
 
 if(STREAM_SEARCH)
-    add_executable(stream_fit_start_search stream_fit_start_search stream_fit_parameters)
+    add_executable(stream_fit_start_search stream_fit_start_search.cxx stream_fit_parameters.cxx)
     target_link_libraries(stream_fit_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 
+
 if(STREAM_NM_SEARCH)
-    add_executable(stream_fit_nm_start_search stream_fit_nm_start_search stream_fit_parameters)
+    add_executable(stream_fit_nm_start_search stream_fit_nm_start_search.cxx stream_fit_parameters.cxx)
     target_link_libraries(stream_fit_nm_start_search ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+endif()
+
+if(STREAM_VALIDATOR)
+    add_executable(stream_fit_validator ${BOINC_INCLUDE_DIR}/sched/validator ${BOINC_INCLUDE_DIR}/sched/validate_util ${BOINC_INCLUDE_DIR}/lib/md5_file stream_fit_validator.cxx)
+    target_link_libraries(stream_fit_validator ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 
 if(NBODY_SEARCH)
@@ -111,3 +118,4 @@ if(NBODY_WGEN)
     add_executable(nbody_work_generator ${PROJECT_SOURCE_DIR}/../tao/boinc/tao_work_generator ${PROJECT_SOURCE_DIR}/../tao/boinc/workunit_information nbody_fpops_from_parameters)
     target_link_libraries(nbody_work_generator ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 endif()
+
