@@ -1,3 +1,7 @@
+[submodule "boinc"]
+	path = boinc
+	url = https://github.com/Milkyway-at-home/boinc-1.git
+	ignore = dirty
 [submodule "tao"]
 	path = tao
 	url = https://github.com/travisdesell/tao.git
