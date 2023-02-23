@@ -1,4 +1,4 @@
-testing
+testing 2.0
 Make sure after checking out you run:
 
 git submodule init
