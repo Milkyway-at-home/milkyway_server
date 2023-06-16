@@ -10,7 +10,7 @@ project (MILKYWAY_SERVER)
 set (TAO_VERSION_MAJOR 1)
 set (TAO_VERSION_MINOR 0)
  
-set(CMAKE_CXX_FLAGS "-g -Wall -O3 -funroll-loops -ftree-vectorize -msse3 -no-pie")
+set(CMAKE_CXX_FLAGS "-g -Wall -O3 -funroll-loops -ftree-vectorize -msse3")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /opt/local/lib)
