@@ -1,4 +1,4 @@
-cd /boinc/src/BOINCBuild1.0.4/milkyway_server/build/
+cd /boinc/src/milkyway_server/build/
 
 sudo -u boinc make
 
@@ -6,7 +6,7 @@ sudo -u boinc cp stream_fit_start_search /boinc/milkyway/bin/stream_fit_start_se
 sudo -u boinc cp nbody_start_search /boinc/milkyway/bin/nbody_start_search
 sudo -u boinc cp nbody_work_generator /boinc/milkyway/bin/nbody_work_generator
 
-cd /boinc/src/BOINCBuild1.0.4/tao/build/boinc
+cd /boinc/src/tao/build/boinc
 
 sudo -u boinc cp tao_assimilator /boinc/milkyway/bin/stream_fit_assimilator
 sudo -u boinc cp tao_validator /boinc/milkyway/bin/stream_fit_validator
