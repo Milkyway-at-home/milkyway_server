@@ -67,8 +67,11 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
+    string app_name_input;
+    get_argument(arguments, "--app_name", true, app_name_input);
+
     DB_APP app;
-    const char* app_name = "milkyway_nbody";
+    const char* app_name = app_name_input.c_str(); 
     char buf[256];
     sprintf(buf, "where name='%s'", app_name);
     if (app.lookup(buf)) {

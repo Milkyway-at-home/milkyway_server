@@ -27,6 +27,7 @@ option(STREAM_NM_SEARCH "Build stream_fit_nm_start_search" ON)
 option(STREAM_VALIDATOR "Build stream_fit_validator" ON)
 option(NBODY_SEARCH "Build nbody_start_search" ON)
 option(NBODY_WGEN "Build nbody_work_generator" ON)
+option(NBODY_ORBIT_FITTING_WGEN "Build nbody_orbit_fitting_work_generator" ON)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/../tao
@@ -128,5 +129,11 @@ if(NBODY_WGEN)
     add_definitions( -DFPOPS_FROM_PARAMETERS )
     add_executable(nbody_work_generator ${PROJECT_SOURCE_DIR}/../tao/boinc/tao_work_generator.cxx ${PROJECT_SOURCE_DIR}/../tao/boinc/workunit_information.cxx nbody_fpops_from_parameters.cxx)
     target_link_libraries(nbody_work_generator ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
+endif()
+
+if(NBODY_ORBIT_FITTING_WGEN)
+    add_definitions( -DFPOPS_FROM_PARAMETERS )
+    add_executable(nbody_orbit_fitting_work_generator ${PROJECT_SOURCE_DIR}/../tao/boinc/tao_work_generator.cxx ${PROJECT_SOURCE_DIR}/../tao/boinc/workunit_information.cxx nbody_fpops_from_parameters.cxx)
+    target_link_libraries(nbody_orbit_fitting_work_generator ${WORKUNIT_INFORMATION_LIBRARY} ${DB_ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${ASYNCHRONOUS_ALGORITHMS_LIBRARY} ${TAO_UTIL_LIBRARY} ${UNDVC_COMMON_LIBRARY} ${BOINC_SERVER_LIBRARIES} ${MYSQL_LIBRARIES} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 
