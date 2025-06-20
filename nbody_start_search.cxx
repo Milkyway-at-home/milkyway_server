@@ -106,6 +106,7 @@ int main(int argc, char **argv) {
     double min_vx_gal, max_vx_gal;
     double min_vy_gal, max_vy_gal;
     double min_vz_gal, max_vz_gal;
+    double min_lmc_mass, max_lmc_mass;
     uint64_t n_bodies;
     get_argument(arguments, "--min_simulation_time", true, min_simulation_time);
     get_argument(arguments, "--max_simulation_time", true, max_simulation_time);
@@ -129,6 +130,8 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--max_vy_gal", true, max_vy_gal);
     get_argument(arguments, "--min_vz_gal", true, min_vz_gal);
     get_argument(arguments, "--max_vz_gal", true, max_vz_gal);
+    get_argument(arguments, "--min_lmc_mass", true, min_lmc_mass);
+    get_argument(arguments, "--max_lmc_mass", true, max_lmc_mass);
     get_argument(arguments, "--n_bodies", true, n_bodies);
 
     //2. get app id
@@ -163,10 +166,10 @@ int main(int argc, char **argv) {
     //      b. calculate rsc_fpops_bound
     //      c. calculate rsc_disk_bound
 
-    double min_b[] = { min_simulation_time, min_orbit_time, min_radius_1, min_radius_2, min_mass_1, min_mass_2, min_b_gal, min_r_gal, min_vx_gal, min_vy_gal, min_vz_gal };
-    double max_b[] = { max_simulation_time, max_orbit_time, max_radius_1, max_radius_2, max_mass_1, max_mass_2, max_b_gal, max_r_gal, max_vx_gal, max_vy_gal, max_vz_gal };
-    vector<double> min_bound(min_b, min_b + 11);
-    vector<double> max_bound(max_b, max_b + 11);
+    double min_b[] = { min_simulation_time, min_orbit_time, min_radius_1, min_radius_2, min_mass_1, min_mass_2, min_b_gal, min_r_gal, min_vx_gal, min_vy_gal, min_vz_gal, min_lmc_mass };
+    double max_b[] = { max_simulation_time, max_orbit_time, max_radius_1, max_radius_2, max_mass_1, max_mass_2, max_b_gal, max_r_gal, max_vx_gal, max_vy_gal, max_vz_gal, max_lmc_mass };
+    vector<double> min_bound(min_b, min_b + 12);
+    vector<double> max_bound(max_b, max_b + 12);
 
     double rsc_disk_bound = 50 * 1024 * 1024; // 50MB
 
