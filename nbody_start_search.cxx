@@ -171,7 +171,7 @@ int main(int argc, char **argv) {
     vector<double> min_bound(min_b, min_b + 12);
     vector<double> max_bound(max_b, max_b + 12);
 
-    double rsc_disk_bound = 50 * 1024 * 1024; // 50MB
+    double rsc_disk_bound = 100 * 1024 * 1024; // 100MB
 
     cout.precision(15);
 
