@@ -47,28 +47,9 @@ void calculate_fpops(const vector<double> &parameters, double &rsc_fpops_est, do
     double mass_1           = parameters[4];
     double mass_2           = parameters[5];
 
-    double rscale_l = radius_1;
-    double rscale_d = (radius_1*(1-radius_2))/radius_1;
-    double mass_l = mass_1;
-    double mass_d = (mass_1*(1-mass_2))/mass_1;
-
-    double mass_enc_d = sqrt(mass_d * (rscale_l * rscale_l * rscale_l) * ( (rscale_l * rscale_l) + (rscale_d * rscale_d) ));
-    double mass_enc_l = sqrt(mass_l * (rscale_d * rscale_d * rscale_d) * ( (rscale_l * rscale_l) + (rscale_d * rscale_d) ));
-
-    mass_enc_d = 1 / (mass_enc_d * mass_enc_d * mass_enc_d);
-    mass_enc_l = 1 / (mass_enc_l * mass_enc_l * mass_enc_l);
-
-    double s1 = (rscale_l * rscale_l * rscale_l) / (mass_enc_d + mass_l);
-    double s2 = (rscale_d * rscale_d * rscale_d) / (mass_enc_l + mass_d);
-
-    double s; 
-
-    if( s1 < s2) {
-        s = s1; 
-    }
-    else {
-        s = s2; 
-    }
+    double max_radius;
+    if (radius_2 > radius_1)    max_radius = radius_2;
+    else                        max_radius = radius_1;
 
     uint64_t n_bodies = 0;
     try {
@@ -82,8 +63,8 @@ void calculate_fpops(const vector<double> &parameters, double &rsc_fpops_est, do
     }
 
 
-    double timestep = (1.0 / 100.0) * sqrt(M_PI * (4.0/3.0) * s);
-    double step_fpops = (6 + 3 + (7 * 5) + (2 * 10) + 20) * (n_bodies * log(n_bodies));
+    double timestep = (0.1 * 0.1) * sqrt(M_PI * (4.0/3.0) * max_radius * max_radius * max_radius / (mass_1 + mass_2));
+    double step_fpops = (6 + 3 + (7 * 5) + (2 * 10) + 20) * (n_bodies * n_bodies);
     double fpops = step_fpops * (simulation_time / timestep);
 
     fpops /= 100;
