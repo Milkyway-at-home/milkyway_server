@@ -36,8 +36,38 @@ using std::vector;
 using std::string;
 
 /**
- *  Need to pass in nbodies somehow
+ * Calculate timestep based on the algorithm from for_developers.lua
  */
+double get_timestep(double radius_1, double radius_2, double mass_1, double mass_2) {
+    
+    double t;
+
+    double rscale_l = radius_1;
+    double rscale_d = (radius_1 * (1 - radius_2)) / radius_1;
+    double mass_l = mass_1;
+    double mass_d = (mass_1 * (1 - mass_2)) / mass_1;
+    
+    // Mass of a single dark matter sphere enclosed within light rscale
+    double mass_enc_d = mass_d * pow(rscale_l, 3) * pow(pow(rscale_l, 2) + pow(rscale_d, 2), -3.0/2.0);
+    
+    // Mass of a single light matter sphere enclosed within dark rscale
+    double mass_enc_l = mass_l * pow(rscale_d, 3) * pow(pow(rscale_l, 2) + pow(rscale_d, 2), -3.0/2.0);
+    
+    double s1 = pow(rscale_l, 3) / (mass_enc_d + mass_l);
+    double s2 = pow(rscale_d, 3) / (mass_enc_l + mass_d);
+    
+    // Return the smaller time step
+    double s;
+    if (s1 < s2) {
+        s = s1;
+    } else {
+        s = s2;
+    }
+    
+    t = (1.0 / 100.0) * sqrt(M_PI * (4.0/3.0) * s);
+    
+    return t;
+}
 
 void calculate_fpops(const vector<double> &parameters, double &rsc_fpops_est, double &rsc_fpops_bound, string workunit_extra_xml) {
     double simulation_time  = parameters[0];
@@ -46,10 +76,6 @@ void calculate_fpops(const vector<double> &parameters, double &rsc_fpops_est, do
     double radius_2         = parameters[3];
     double mass_1           = parameters[4];
     double mass_2           = parameters[5];
-
-    double max_radius;
-    if (radius_2 > radius_1)    max_radius = radius_2;
-    else                        max_radius = radius_1;
 
     uint64_t n_bodies = 0;
     try {
@@ -62,21 +88,12 @@ void calculate_fpops(const vector<double> &parameters, double &rsc_fpops_est, do
         exit(1);
     }
 
+    double timestep = get_timestep(radius_1, radius_2, mass_1, mass_2);
+    uint64_t per_body_integration_fpops = 10973;
+    uint64_t per_body_dwarf_gen_fpops = 267577604;
+    double fpops = (simulation_time / timestep * n_bodies * std::log(n_bodies) * per_body_integration_fpops) + (n_bodies * per_body_dwarf_gen_fpops);
 
-    double timestep = (0.1 * 0.1) * sqrt(M_PI * (4.0/3.0) * max_radius * max_radius * max_radius / (mass_1 + mass_2));
-    double step_fpops = (6 + 3 + (7 * 5) + (2 * 10) + 20) * (n_bodies * n_bodies);
-    double fpops = step_fpops * (simulation_time / timestep);
-
-    fpops /= 100;
-
-//    cerr << "workunit_extra_xml: " << workunit_extra_xml << endl;
-//    cerr << "n_bodies: " << n_bodies << endl;
-//    cerr << "parameters: " << vector_to_string(parameters) << endl;
-//    cerr << "timestep: " << timestep << endl;
-//    cerr << "step_fpops: " << step_fpops << endl;
-//    cerr << "fpops: " << fpops << endl;
-
-    rsc_fpops_est = fpops * 10;
+    rsc_fpops_est = fpops;
     rsc_fpops_bound = fpops * 100000;
 }
 
