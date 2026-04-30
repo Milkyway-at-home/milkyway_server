@@ -107,6 +107,8 @@ int main(int argc, char **argv) {
     double min_vy_gal, max_vy_gal;
     double min_vz_gal, max_vz_gal;
     double min_lmc_mass, max_lmc_mass;
+    double min_core_radius = 0.0, max_core_radius = 0.0;
+    double min_core_rscale = 0.0, max_core_rscale = 0.0;
     uint64_t n_bodies;
     get_argument(arguments, "--min_simulation_time", true, min_simulation_time);
     get_argument(arguments, "--max_simulation_time", true, max_simulation_time);
@@ -132,6 +134,11 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--max_vz_gal", true, max_vz_gal);
     get_argument(arguments, "--min_lmc_mass", true, min_lmc_mass);
     get_argument(arguments, "--max_lmc_mass", true, max_lmc_mass);
+    bool has_core_bounds = false;
+    has_core_bounds = get_argument(arguments, "--min_core_radius", false, min_core_radius) || has_core_bounds;
+    has_core_bounds = get_argument(arguments, "--max_core_radius", false, max_core_radius) || has_core_bounds;
+    has_core_bounds = get_argument(arguments, "--min_core_rscale", false, min_core_rscale) || has_core_bounds;
+    has_core_bounds = get_argument(arguments, "--max_core_rscale", false, max_core_rscale) || has_core_bounds;
     get_argument(arguments, "--n_bodies", true, n_bodies);
 
     //2. get app id
@@ -170,6 +177,13 @@ int main(int argc, char **argv) {
     double max_b[] = { max_simulation_time, max_orbit_time, max_radius_1, max_radius_2, max_mass_1, max_mass_2, max_b_gal, max_r_gal, max_vx_gal, max_vy_gal, max_vz_gal, max_lmc_mass };
     vector<double> min_bound(min_b, min_b + 12);
     vector<double> max_bound(max_b, max_b + 12);
+
+    if (has_core_bounds) {
+        min_bound.push_back(min_core_radius);
+        min_bound.push_back(min_core_rscale);
+        max_bound.push_back(max_core_radius);
+        max_bound.push_back(max_core_rscale);
+    }
 
     double rsc_disk_bound = 100 * 1024 * 1024; // 100MB
 
