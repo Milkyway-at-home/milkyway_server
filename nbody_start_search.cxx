@@ -107,8 +107,8 @@ int main(int argc, char **argv) {
     double min_vy_gal, max_vy_gal;
     double min_vz_gal, max_vz_gal;
     double min_lmc_mass, max_lmc_mass;
-    double min_core_radius = 0.0, max_core_radius = 0.0;
-    double min_core_rscale = 0.0, max_core_rscale = 0.0;
+    double min_r1_rs = 0.0, max_r1_rs = 0.0;
+    double min_rc_rs = 0.0, max_rc_rs = 0.0;
     uint64_t n_bodies;
     get_argument(arguments, "--min_simulation_time", true, min_simulation_time);
     get_argument(arguments, "--max_simulation_time", true, max_simulation_time);
@@ -135,10 +135,10 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--min_lmc_mass", true, min_lmc_mass);
     get_argument(arguments, "--max_lmc_mass", true, max_lmc_mass);
     bool has_core_bounds = false;
-    has_core_bounds = get_argument(arguments, "--min_core_radius", false, min_core_radius) || has_core_bounds;
-    has_core_bounds = get_argument(arguments, "--max_core_radius", false, max_core_radius) || has_core_bounds;
-    has_core_bounds = get_argument(arguments, "--min_core_rscale", false, min_core_rscale) || has_core_bounds;
-    has_core_bounds = get_argument(arguments, "--max_core_rscale", false, max_core_rscale) || has_core_bounds;
+    has_core_bounds = get_argument(arguments, "--min_r1_rs", false, min_r1_rs) || has_core_bounds;
+    has_core_bounds = get_argument(arguments, "--max_r1_rs", false, max_r1_rs) || has_core_bounds;
+    has_core_bounds = get_argument(arguments, "--min_rc_rs", false, min_rc_rs) || has_core_bounds;
+    has_core_bounds = get_argument(arguments, "--max_rc_rs", false, max_rc_rs) || has_core_bounds;
     get_argument(arguments, "--n_bodies", true, n_bodies);
 
     //2. get app id
