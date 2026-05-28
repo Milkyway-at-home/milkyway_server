@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--min_lmc_mass", true, min_lmc_mass);
     get_argument(arguments, "--max_lmc_mass", true, max_lmc_mass);
     /*
-    Check for the presence all four arguments (--min_r1_rs etc.) no matter what, and set has_core_bounds if and only if at least one of them is found.
+    Check for the presence of all four Cored NFW optimization arguments (--min_r1_rs etc.) no matter what, and set has_core_bounds if and only if at least one of them is found.
     Any missing ones then default to 0.0 as set previously. 
     */
     bool has_core_bounds = false;
