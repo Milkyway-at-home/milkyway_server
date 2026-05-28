@@ -134,6 +134,10 @@ int main(int argc, char **argv) {
     get_argument(arguments, "--max_vz_gal", true, max_vz_gal);
     get_argument(arguments, "--min_lmc_mass", true, min_lmc_mass);
     get_argument(arguments, "--max_lmc_mass", true, max_lmc_mass);
+    /*
+    Check for the presence all four arguments (--min_r1_rs etc.) no matter what, and set has_core_bounds if and only if at least one of them is found.
+    Any missing ones then default to 0.0 as set previously. 
+    */
     bool has_core_bounds = false;
     has_core_bounds = get_argument(arguments, "--min_r1_rs", false, min_r1_rs) || has_core_bounds;
     has_core_bounds = get_argument(arguments, "--max_r1_rs", false, max_r1_rs) || has_core_bounds;
