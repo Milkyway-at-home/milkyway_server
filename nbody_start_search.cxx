@@ -179,10 +179,10 @@ int main(int argc, char **argv) {
     vector<double> max_bound(max_b, max_b + 12);
 
     if (has_core_bounds) {
-        min_bound.push_back(min_core_radius);
-        min_bound.push_back(min_core_rscale);
-        max_bound.push_back(max_core_radius);
-        max_bound.push_back(max_core_rscale);
+        min_bound.push_back(min_r1_rs);
+        min_bound.push_back(min_rc_rs);
+        max_bound.push_back(max_r1_rs);
+        max_bound.push_back(max_rc_rs);
     }
 
     double rsc_disk_bound = 100 * 1024 * 1024; // 100MB
